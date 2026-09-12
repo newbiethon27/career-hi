@@ -7,10 +7,10 @@ import { PageSkeleton } from "@/components/common/PageSkeleton";
 import { CompareTable } from "@/components/compare/CompareTable";
 import { RawMetricsTable } from "@/components/company/RawMetricsTable";
 import { buttonVariants } from "@/components/ui/button";
-import { getCompany } from "@/lib/companies";
 import { buildCompareSummary } from "@/lib/explain";
 import { computeFit } from "@/lib/fit";
 import { cn } from "@/lib/utils";
+import { useCompany } from "@/store/CompaniesContext";
 import { useAnalysis } from "@/store/useAnalysis";
 import { useGuard } from "@/store/useGuard";
 
@@ -26,17 +26,19 @@ function CompareInner() {
   const { ready } = useGuard("profile");
   const analysis = useAnalysis();
   const params = useSearchParams();
+  const requested = params.get("target");
+  const requestedCompany = useCompany(requested); // 훅은 early return 앞에서
   if (!ready || !analysis) return <PageSkeleton />;
 
+  // 비교 기준: 재직자는 현재 회사, 구직자는 업계 평균
   const { assessment, rec } = analysis;
-  const current = rec.current.company;
+  const baseline = rec.baseline;
 
   // target 이 없거나 잘못되면 추천 1위 → 없으면 풀 1위
-  const requested = params.get("target");
   const fallback = rec.top[0]?.company ?? rec.ranked[0]?.company ?? null;
-  const target = (requested ? getCompany(requested) : null) ?? fallback;
+  const target = requestedCompany ?? fallback;
 
-  if (!target || target.id === current.id) {
+  if (!target || target.id === baseline.company.id) {
     return (
       <div className="mx-auto w-full max-w-3xl px-4 py-16 text-center">
         <p className="text-muted-foreground">비교할 회사를 찾을 수 없어요.</p>
@@ -48,15 +50,15 @@ function CompareInner() {
   }
 
   const targetFit = computeFit(assessment.weights, target.scores, target.id).fit;
-  const fitDelta = targetFit - rec.current.fit.fit;
-  const summary = buildCompareSummary(assessment, current, target, fitDelta);
+  const fitDelta = targetFit - baseline.fit.fit;
+  const summary = buildCompareSummary(assessment, { company: baseline.company, label: baseline.label }, target, fitDelta);
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-10 sm:py-14">
       <div>
-        <div className="mb-1 text-sm font-semibold text-primary">나란히 비교</div>
+        <div className="mb-1 text-sm font-semibold text-primary">{baseline.label} vs 비교 대상</div>
         <h1 className="text-[1.75rem] font-bold leading-snug tracking-tight sm:text-3xl">
-          {current.name} <span className="font-normal text-muted-foreground">vs</span> {target.name}
+          {baseline.company.name} <span className="font-normal text-muted-foreground">vs</span> {target.name}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">두 회사를 나란히 두면 내 기준이 더 선명해져요. 초록 숫자가 비교 회사가 앞서는 항목입니다.</p>
       </div>
@@ -80,7 +82,7 @@ function CompareInner() {
         </div>
       ) : null}
 
-      <CompareTable current={current} target={target} currentFit={rec.current.fit.fit} targetFit={targetFit} />
+      <CompareTable base={baseline.company} baseLabel={baseline.label} target={target} baseFit={baseline.fit.fit} targetFit={targetFit} />
 
       <section className="rounded-3xl bg-accent/60 p-5 text-[15px] leading-relaxed sm:p-6">
         <div className="mb-2 text-sm font-bold text-accent-foreground">정리하면</div>
@@ -98,9 +100,11 @@ function CompareInner() {
         <Link href="/recommend" className={buttonVariants({ variant: "ghost", size: "lg" })}>
           추천 목록으로
         </Link>
-        <Link href="/dashboard" className={buttonVariants({ variant: "ghost", size: "lg" })}>
-          적합도 화면으로
-        </Link>
+        {rec.current ? (
+          <Link href="/dashboard" className={buttonVariants({ variant: "ghost", size: "lg" })}>
+            현재 회사 Fit 분석
+          </Link>
+        ) : null}
       </div>
     </div>
   );

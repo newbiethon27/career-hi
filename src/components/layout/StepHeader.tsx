@@ -4,19 +4,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
+/** 기본 플로우. /dashboard(현재 회사 Fit)는 재직자 부가 기능이라 여기 넣지 않는다. */
 const STEPS = [
   { href: "/assessment", label: "성향 진단" },
-  { href: "/result", label: "내 성향" },
-  { href: "/profile", label: "현재 회사" },
-  { href: "/dashboard", label: "적합도" },
-  { href: "/recommend", label: "추천" },
+  { href: "/result", label: "유형 결과" },
+  { href: "/profile", label: "직군 선택" },
+  { href: "/recommend", label: "회사 추천" },
   { href: "/compare", label: "비교" },
 ];
+
+const OPTIONAL_STEP = { href: "/dashboard", label: "현재 회사 Fit · 부가 기능" };
 
 export function StepHeader() {
   const pathname = usePathname();
   const activeIdx = STEPS.findIndex((s) => pathname.startsWith(s.href));
-  const inFlow = activeIdx >= 0;
+  const onOptional = pathname.startsWith(OPTIONAL_STEP.href);
+  const inFlow = activeIdx >= 0 || onOptional;
 
   return (
     <header className="sticky top-0 z-20 border-b border-border/70 bg-background/85 backdrop-blur">
@@ -47,21 +50,28 @@ export function StepHeader() {
                   {i < STEPS.length - 1 ? <span className="text-border">·</span> : null}
                 </span>
               ))}
+              {onOptional ? (
+                <span className="ml-2 rounded-full bg-primary px-2.5 py-1 font-medium text-primary-foreground">{OPTIONAL_STEP.label}</span>
+              ) : null}
             </nav>
             {/* 모바일: 점 + 현재 단계 */}
             <div className="flex items-center gap-2 sm:hidden">
-              <span className="text-xs font-medium text-muted-foreground">{STEPS[activeIdx].label}</span>
-              <div className="flex items-center gap-1" aria-hidden>
-                {STEPS.map((s, i) => (
-                  <span
-                    key={s.href}
-                    className={cn(
-                      "h-1.5 rounded-full transition-all",
-                      i === activeIdx ? "w-4 bg-primary" : i < activeIdx ? "w-1.5 bg-primary/50" : "w-1.5 bg-border",
-                    )}
-                  />
-                ))}
-              </div>
+              <span className="text-xs font-medium text-muted-foreground">
+                {onOptional ? OPTIONAL_STEP.label : STEPS[activeIdx].label}
+              </span>
+              {!onOptional ? (
+                <div className="flex items-center gap-1" aria-hidden>
+                  {STEPS.map((s, i) => (
+                    <span
+                      key={s.href}
+                      className={cn(
+                        "h-1.5 rounded-full transition-all",
+                        i === activeIdx ? "w-4 bg-primary" : i < activeIdx ? "w-1.5 bg-primary/50" : "w-1.5 bg-border",
+                      )}
+                    />
+                  ))}
+                </div>
+              ) : null}
             </div>
           </>
         ) : (

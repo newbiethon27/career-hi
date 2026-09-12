@@ -24,14 +24,27 @@ export const assessmentSchema = z.object({
   completedAt: z.string(),
 });
 
-export const profileSchema = z.object({
-  jobFamily: z.enum(["dev", "data", "pm", "design", "marketing"]),
-  currentCompanyId: z.string().min(1),
-  currentSalary: z.number().min(1000).max(50000),
-  tenureMonths: z.number().int().min(0).max(480),
-  region: z.string().optional(),
-  commuteMinutes: z.number().int().min(0).max(180).optional(),
-});
+/**
+ * 직군만 있으면 유효하다 (구직자 기본 플로우).
+ * 현재 회사 3개 값은 부가 기능 전용이며 "전부 있거나 전부 없거나" 둘 중 하나여야 한다
+ * — 일부만 남으면 Fit·Move Timing 이 조용히 틀린 값을 내기 때문이다.
+ */
+export const profileSchema = z
+  .object({
+    jobFamily: z.enum(["dev", "data", "pm", "design", "marketing"]),
+    currentCompanyId: z.string().min(1).optional(),
+    currentSalary: z.number().min(1000).max(50000).optional(),
+    tenureMonths: z.number().int().min(0).max(480).optional(),
+    region: z.string().optional(),
+    commuteMinutes: z.number().int().min(0).max(180).optional(),
+  })
+  .refine(
+    (p) => {
+      const filled = [p.currentCompanyId, p.currentSalary, p.tenureMonths].filter((v) => v != null).length;
+      return filled === 0 || filled === 3;
+    },
+    { message: "현재 회사 정보는 회사·연봉·근속을 모두 입력해야 합니다.", path: ["currentCompanyId"] },
+  );
 
 export const progressSchema = z.object({
   index: z.number().int().min(0).max(QUESTION_COUNT),

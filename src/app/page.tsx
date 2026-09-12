@@ -7,18 +7,9 @@ import { cn } from "@/lib/utils";
 const CRITERIA = ["보상", "워라밸", "고용 안정", "회사 성장"];
 
 const STEPS = [
-  {
-    title: "내가 중요하게 보는 기준 찾기",
-    desc: "둘 중 하나를 고르는 질문에 답하면, 보상·균형·안정·성장 중 무엇을 먼저 보는지 정리됩니다.",
-  },
-  {
-    title: "지금 회사와 얼마나 맞는지 확인",
-    desc: "내 기준으로 지금 다니는 회사를 점수로 확인합니다. 점수가 나온 이유도 함께 보여드려요.",
-  },
-  {
-    title: "나에게 더 맞는 회사 보기",
-    desc: "같은 기준으로 다른 회사를 비교해, 더 맞는 곳이 있으면 이유와 주의할 점을 함께 알려드려요.",
-  },
+  { title: "성향 진단", desc: "10개의 trade-off 질문으로 보상·균형·안정·성장 중 무엇을 우선하는지 파악합니다." },
+  { title: "맞는 회사 추천", desc: "같은 기준으로 점수화한 회사 중 내 성향에 맞는 곳을 이유·주의점과 함께 TOP 3로 제시합니다." },
+  { title: "회사 비교", desc: "관심 있는 회사를 보상·균형·안정·성장 네 축과 공시 원본 지표로 나란히 비교합니다." },
 ];
 
 export default function LandingPage() {
@@ -26,13 +17,12 @@ export default function LandingPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-14 sm:py-20">
       <section className="space-y-7">
         <h1 className="text-[2rem] font-bold leading-[1.35] tracking-tight sm:text-5xl sm:leading-[1.3]">
-          나에게 맞는 회사는
+          어디에 지원해야 할지 모르겠다면
           <br />
-          연봉만으로 <span className="text-highlight text-primary">정해지지 않으니까</span>
+          <span className="text-highlight text-primary">기준부터 만들고 시작하세요</span>
         </h1>
         <p className="max-w-xl text-[17px] leading-relaxed text-muted-foreground">
-          같은 직무, 같은 연봉이어도 좋은 회사는 사람마다 다릅니다. 내가 무엇을 중요하게 보는지 먼저 알아보고, 지금 회사와
-          얼마나 맞는지 점수와 이유로 확인해 보세요.
+          10개 질문으로 커리어 성향을 진단하고, 그 기준으로 점수화한 회사 중 나에게 맞는 곳을 이유와 함께 추천받으세요. 약 2분.
         </p>
         <div className="flex flex-wrap gap-2">
           {CRITERIA.map((c) => (
@@ -67,12 +57,21 @@ export default function LandingPage() {
       </section>
 
       <section className="mt-12 rounded-2xl border border-dashed border-primary/30 bg-card/60 p-5 sm:p-6">
-        <div className="text-[15px] font-bold">결과를 먼저 구경해 볼까요?</div>
+        <div className="text-[15px] font-bold">데모로 바로 보기</div>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-          같은 회사, 같은 직군, 같은 연봉인 두 사람입니다. 중요하게 보는 기준만 다를 때 결과가 어떻게 달라지는지 바로 볼 수
-          있어요.
+          같은 직군·같은 조건의 두 사람. 성향만 다르면 추천이 어떻게 달라지는지 바로 확인합니다.
         </p>
         <DemoPresets />
+      </section>
+
+      <section className="mt-6 rounded-2xl border bg-card p-5 shadow-soft">
+        <div className="text-sm font-semibold">
+          이미 회사에 다니고 있나요?
+          <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[11px] font-normal text-muted-foreground">부가 기능</span>
+        </div>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+          진단 후 현재 회사 정보를 추가로 입력하면, 지금 다니는 회사와의 적합도 점수와 이직 타이밍 지수도 함께 확인할 수 있습니다.
+        </p>
       </section>
     </div>
   );

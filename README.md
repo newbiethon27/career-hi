@@ -2,7 +2,7 @@
 
 > "같은 직무, 같은 연봉이어도 좋은 회사는 사람마다 다릅니다."
 
-커리어 성향을 진단하고, 현재 회사와의 적합도(Fit Score)를 설명 가능한 점수로 계산해 더 맞는 회사를 추천하는 Career Decision Service. 설계 문서는 [`PLAN.md`](./PLAN.md), 협업 규칙은 [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+커리어 성향을 진단하고, 그 기준으로 점수화한 회사 중 나에게 맞는 곳을 이유와 함께 추천하는 Career Decision Service. 주 사용자는 아직 취업하지 않은 사회 초년생이며, 현재 회사와의 적합도(Fit Score) 분석은 재직자용 부가 기능이다. 설계 문서는 [`PLAN.md`](./PLAN.md), 협업 규칙은 [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ## 실행
 
@@ -24,7 +24,21 @@ npm run lint
 
 두 페르소나는 회사·직군·연봉·근속이 완전히 같고 성향만 다르다. `tests/persona.test.ts`가 이 대비를 회귀 테스트로 고정한다.
 
-## 데이터 출처 (파일이 곧 출처다)
+## 회사 데이터는 Supabase 에 있습니다
+
+회사 지표를 **코드가 아니라 DB 에** 두어, 배포 없이 고칠 수 있게 했습니다. 디자인 작업과 데이터 작업이 같은 PR 에서 충돌하지 않는 것이 목적입니다. 설정은 [`supabase/README.md`](./supabase/README.md).
+
+```
+Supabase companies 테이블
+   ↓ RootLayout(서버) 이 60초 ISR 로 읽음
+CompaniesProvider → useCompanies() → 계산 로직(순수 함수, 그대로)
+   ↓ 닿지 않으면
+data/*.json 폴백 + 푸터에 그 사실 표시
+```
+
+API 라우트는 여전히 0개입니다 — Server Component 가 직접 읽습니다. 계산은 전부 클라이언트에서 그대로 돌아갑니다.
+
+## 데이터 출처 (컬럼이 곧 출처다)
 
 | 파일 | 내용 | UI 배지 |
 |---|---|---|
@@ -66,9 +80,10 @@ src/lib/        계산 엔진 (순수 함수, UI 의존 없음)
   companies.ts fit.ts recommend.ts explain.ts moveTiming.ts presets.ts storage.ts
 src/store/      CareerContext (useSyncExternalStore + localStorage), useGuard, useAnalysis
 src/components/ common / layout / assessment / result / company / compare / landing
-src/app/        /  /assessment  /result  /profile  /dashboard  /recommend  /compare
+src/app/        기본 플로우: /  /assessment  /result  /profile(직군)  /recommend  /compare
+                부가 기능:   /dashboard (현재 회사 Fit · 이직 타이밍)
 scripts/        fetch-dart.ts (수동 실행), dart-parsers.ts
-tests/          vitest 7파일 51케이스
+tests/          vitest 8파일 61케이스
 ```
 
 백엔드 API·DB 없음. 모든 계산은 클라이언트에서 `useMemo` 로, 상태는 localStorage 에만 저장된다.

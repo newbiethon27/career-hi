@@ -13,8 +13,8 @@
         "design",
         "marketing"
       ],
-      "worklifeIndex": 58,
-      "note": "제조·반도체 산업군 기준 추정치"
+      "worklifeIndex": 68,
+      "note": "관련 국내 커뮤니티(블라인드와 잡플래닛 등)의 커뮤니티 정보를 통해 추정"
     },
     {
       "id": "sk-hynix",
@@ -26,8 +26,8 @@
         "data",
         "pm"
       ],
-      "worklifeIndex": 58,
-      "note": "제조·반도체 산업군 기준 추정치"
+      "worklifeIndex": 78,
+      "note": "관련 국내 커뮤니티(블라인드와 잡플래닛 등)의 커뮤니티 정보를 통해 추정"
     },
     {
       "id": "naver",
@@ -41,8 +41,8 @@
         "design",
         "marketing"
       ],
-      "worklifeIndex": 75,
-      "note": "인터넷 산업군 기준 추정치"
+      "worklifeIndex": 82,
+      "note": "관련 국내 커뮤니티(블라인드와 잡플래닛 등)의 커뮤니티 정보를 통해 추정"
     },
     {
       "id": "kakao",
@@ -56,8 +56,8 @@
         "design",
         "marketing"
       ],
-      "worklifeIndex": 75,
-      "note": "인터넷 산업군 기준 추정치"
+      "worklifeIndex": 70,
+      "note": "관련 국내 커뮤니티(블라인드와 잡플래닛 등)의 커뮤니티 정보를 통해 추정"
     },
     {
       "id": "krafton",
@@ -72,7 +72,7 @@
         "marketing"
       ],
       "worklifeIndex": 62,
-      "note": "게임 산업군 기준 추정치"
+      "note": "관련 국내 커뮤니티(블라인드와 잡플래닛 등)의 커뮤니티 정보를 통해 추정"
     },
     {
       "id": "ncsoft",
@@ -86,8 +86,8 @@
         "design",
         "marketing"
       ],
-      "worklifeIndex": 62,
-      "note": "게임 산업군 기준 추정치"
+      "worklifeIndex": 65,
+      "note": "관련 국내 커뮤니티(블라인드와 잡플래닛 등)의 커뮤니티 정보를 통해 추정"
     },
     {
       "id": "samsung-sds",
@@ -100,8 +100,8 @@
         "pm",
         "design"
       ],
-      "worklifeIndex": 66,
-      "note": "IT서비스 산업군 기준 추정치"
+      "worklifeIndex": 72,
+      "note": "관련 국내 커뮤니티(블라인드와 잡플래닛 등)의 커뮤니티 정보를 통해 추정"
     },
     {
       "id": "lg-electronics",
@@ -115,8 +115,8 @@
         "design",
         "marketing"
       ],
-      "worklifeIndex": 60,
-      "note": "제조·전자 산업군 기준 추정치"
+      "worklifeIndex": 76,
+      "note": "관련 국내 커뮤니티(블라인드와 잡플래닛 등)의 커뮤니티 정보를 통해 추정"
     },
     {
       "id": "hyundai-motor",
@@ -130,8 +130,8 @@
         "design",
         "marketing"
       ],
-      "worklifeIndex": 56,
-      "note": "제조·자동차 산업군 기준 추정치"
+      "worklifeIndex": 84,
+      "note": "관련 국내 커뮤니티(블라인드와 잡플래닛 등)의 커뮤니티 정보를 통해 추정"
     },
     {
       "id": "kt",
@@ -144,8 +144,8 @@
         "pm",
         "marketing"
       ],
-      "worklifeIndex": 70,
-      "note": "통신 산업군 기준 추정치"
+      "worklifeIndex": 88,
+      "note": "관련 국내 커뮤니티(블라인드와 잡플래닛 등)의 커뮤니티 정보를 통해 추정"
     }
   ]
 }

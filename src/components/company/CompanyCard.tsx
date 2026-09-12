@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AXIS_COLOR } from "@/components/common/AxisBar";
-import { SourceBadge } from "@/components/common/SourceBadge";
+import { AxisScoreInfo } from "@/components/common/AxisScoreInfo";
 import { fitTone } from "@/components/common/ScoreHero";
 import { buttonVariants } from "@/components/ui/button";
 import { AXES, AXIS_LABEL, type Recommendation } from "@/lib/types";
@@ -9,15 +9,16 @@ import { cn, signed } from "@/lib/utils";
 interface Props {
   rank: number;
   rec: Recommendation;
-  currentName: string;
-  currentFit: number;
+  /** 비교 기준 이름 — 재직자는 현재 회사, 구직자는 업계 평균 */
+  baselineName: string;
+  baselineFit: number;
   compact?: boolean;
 }
 
 const RANK_STYLE = ["bg-accent text-accent-foreground", "bg-muted text-foreground", "bg-muted text-foreground"];
 
-/** 추천 카드: 적합도 + 이유 + 주의점. 트레이드오프를 같이 보여주는 것이 신뢰를 만든다. */
-export function CompanyCard({ rank, rec, currentName, currentFit, compact }: Props) {
+/** 추천 카드: Fit + 이유 + 주의점. 트레이드오프를 같이 보여주는 것이 신뢰를 만든다. */
+export function CompanyCard({ rank, rec, baselineName, baselineFit, compact }: Props) {
   const tone = fitTone(rec.fit.fit);
   const body = (
     <>
@@ -31,11 +32,14 @@ export function CompanyCard({ rank, rec, currentName, currentFit, compact }: Pro
         </div>
         <div className={cn("flex size-16 shrink-0 flex-col items-center justify-center rounded-full", tone.bg)}>
           <span className={cn("text-2xl font-bold leading-none tabular-nums", tone.text)}>{rec.fit.fit}</span>
-          <span className="mt-0.5 text-[10px] text-muted-foreground">적합도</span>
+          <span className="mt-0.5 text-[10px] text-muted-foreground">Fit</span>
         </div>
       </div>
       <div className="text-xs text-muted-foreground">
-        {currentName} {currentFit}점보다 <span className="font-semibold text-emerald-700 dark:text-emerald-400">{signed(rec.fitDelta)}점</span>
+        {baselineName} {baselineFit} 대비{" "}
+        <span className={cn("font-semibold", rec.fitDelta > 0 ? "text-emerald-700 dark:text-emerald-400" : "text-foreground")}>
+          {signed(rec.fitDelta)}
+        </span>
       </div>
     </>
   );
@@ -63,7 +67,7 @@ export function CompanyCard({ rank, rec, currentName, currentFit, compact }: Pro
               <div className={cn("h-full rounded-full", AXIS_COLOR[axis])} style={{ width: `${rec.company.scores[axis]}%` }} />
             </div>
             <span className="w-7 text-right tabular-nums">{rec.company.scores[axis]}</span>
-            <SourceBadge source={rec.company.scoreSources[axis]} />
+            <AxisScoreInfo axis={axis} company={rec.company} />
           </div>
         ))}
       </div>
@@ -86,7 +90,7 @@ export function CompanyCard({ rank, rec, currentName, currentFit, compact }: Pro
       </div>
 
       <Link href={`/compare?target=${rec.company.id}`} className={cn(buttonVariants({ variant: "outline", size: "lg" }), "self-start")}>
-        지금 회사와 나란히 비교
+        지표 자세히 비교
       </Link>
     </div>
   );

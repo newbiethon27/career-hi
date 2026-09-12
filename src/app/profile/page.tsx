@@ -4,12 +4,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PageSkeleton } from "@/components/common/PageSkeleton";
 import { Button } from "@/components/ui/button";
-import { COMPANIES } from "@/lib/companies";
 import { JOB_FAMILY_LABEL, OTHER_COMPANY_ID, REGIONS } from "@/lib/constants";
 import { profileSchema } from "@/lib/storage";
-import type { JobFamily, UserProfile } from "@/lib/types";
+import { isEmployed, type JobFamily, type UserProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useCareer } from "@/store/CareerContext";
+import { useCompanies } from "@/store/CompaniesContext";
 import { useGuard } from "@/store/useGuard";
 
 const inputCls =
@@ -17,6 +17,8 @@ const inputCls =
 
 interface FormState {
   jobFamily: JobFamily;
+  /** 재직 중 부가 기능 사용 여부 */
+  employed: boolean;
   currentCompanyId: string;
   currentSalary: string;
   tenureYears: string;
@@ -27,6 +29,7 @@ interface FormState {
 
 const EMPTY_FORM: FormState = {
   jobFamily: "dev",
+  employed: false,
   currentCompanyId: "samsung-sds",
   currentSalary: "",
   tenureYears: "",
@@ -36,12 +39,14 @@ const EMPTY_FORM: FormState = {
 };
 
 function fromProfile(p: UserProfile): FormState {
+  const employed = isEmployed(p);
   return {
     jobFamily: p.jobFamily,
-    currentCompanyId: p.currentCompanyId,
-    currentSalary: String(p.currentSalary),
-    tenureYears: String(Math.floor(p.tenureMonths / 12)),
-    tenureMonths: String(p.tenureMonths % 12),
+    employed,
+    currentCompanyId: p.currentCompanyId ?? EMPTY_FORM.currentCompanyId,
+    currentSalary: p.currentSalary != null ? String(p.currentSalary) : "",
+    tenureYears: p.tenureMonths != null ? String(Math.floor(p.tenureMonths / 12)) : "",
+    tenureMonths: p.tenureMonths != null ? String(p.tenureMonths % 12) : "0",
     region: p.region ?? "",
     commuteMinutes: p.commuteMinutes != null ? String(p.commuteMinutes) : "",
   };
@@ -57,6 +62,7 @@ export default function ProfilePage() {
 
 function ProfileForm({ initial }: { initial: FormState }) {
   const { setProfile } = useCareer();
+  const { companies } = useCompanies();
   const router = useRouter();
   const [form, setForm] = useState<FormState>(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -68,14 +74,18 @@ function ProfileForm({ initial }: { initial: FormState }) {
     e.preventDefault();
     const years = Number(form.tenureYears || 0);
     const months = Number(form.tenureMonths || 0);
-    const candidate = {
-      jobFamily: form.jobFamily,
-      currentCompanyId: form.currentCompanyId,
-      currentSalary: Number(form.currentSalary),
-      tenureMonths: years * 12 + months,
-      region: form.region || undefined,
-      commuteMinutes: form.commuteMinutes ? Number(form.commuteMinutes) : undefined,
-    };
+    // 부가 기능을 끄면 현재 회사 값은 아예 저장하지 않는다 (부분 입력 상태를 만들지 않는다)
+    const candidate: Record<string, unknown> = form.employed
+      ? {
+          jobFamily: form.jobFamily,
+          currentCompanyId: form.currentCompanyId,
+          currentSalary: Number(form.currentSalary),
+          tenureMonths: years * 12 + months,
+          region: form.region || undefined,
+          commuteMinutes: form.commuteMinutes ? Number(form.commuteMinutes) : undefined,
+        }
+      : { jobFamily: form.jobFamily };
+
     const parsed = profileSchema.safeParse(candidate);
     if (!parsed.success) {
       const errs: Record<string, string> = {};
@@ -88,15 +98,15 @@ function ProfileForm({ initial }: { initial: FormState }) {
     }
     setErrors({});
     setProfile(parsed.data);
-    router.push("/dashboard");
+    router.push(form.employed ? "/dashboard" : "/recommend");
   };
 
   return (
     <div className="mx-auto w-full max-w-xl px-4 py-10 sm:py-14">
-      <div className="mb-2 text-sm font-semibold text-primary">현재 회사</div>
-      <h1 className="text-[1.75rem] font-bold leading-snug tracking-tight sm:text-3xl">지금 다니는 회사를 알려주세요</h1>
+      <div className="mb-2 text-sm font-semibold text-primary">직군 선택</div>
+      <h1 className="text-[1.75rem] font-bold leading-snug tracking-tight sm:text-3xl">어떤 직군을 목표로 하고 있나요?</h1>
       <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
-        내 기준으로 지금 회사가 얼마나 맞는지 계산하는 데 필요한 최소 정보예요. 입력한 내용은 이 브라우저에만 저장됩니다.
+        해당 직군을 채용하는 회사만 비교합니다. 저장은 이 브라우저에만 됩니다.
       </p>
 
       <form onSubmit={submit} className="mt-8 space-y-6 rounded-3xl border bg-card p-5 shadow-soft sm:p-7" noValidate>
@@ -110,95 +120,120 @@ function ProfileForm({ initial }: { initial: FormState }) {
           </select>
         </Field>
 
-        <Field
-          label="현재 회사"
-          error={errors.currentCompanyId}
-          hint={
-            form.currentCompanyId === OTHER_COMPANY_ID
-              ? `목록에 없는 회사는 비교 대상 ${COMPANIES.length}개사의 중앙값(업계 평균 프로필)으로 비교해요.`
-              : undefined
-          }
-        >
-          <select className={inputCls} value={form.currentCompanyId} onChange={set("currentCompanyId")}>
-            {COMPANIES.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name} · {c.industry}
-              </option>
-            ))}
-            <option value={OTHER_COMPANY_ID}>목록에 없음</option>
-          </select>
-        </Field>
-
-        <Field label="현재 연봉" error={errors.currentSalary} hint="세전 기준, 만원 단위로 입력해 주세요.">
-          <UnitInput unit="만원">
+        <section className="rounded-2xl border border-dashed p-4 sm:p-5">
+          <label className="flex cursor-pointer items-start gap-3">
             <input
-              type="number"
-              inputMode="numeric"
-              className={cn(inputCls, "pr-16")}
-              placeholder="예: 7000"
-              value={form.currentSalary}
-              onChange={set("currentSalary")}
-              aria-invalid={!!errors.currentSalary}
+              type="checkbox"
+              className="mt-1 size-4 accent-primary"
+              checked={form.employed}
+              onChange={(e) => setForm((f) => ({ ...f, employed: e.target.checked }))}
             />
-          </UnitInput>
-        </Field>
+            <span>
+              <span className="block text-sm font-semibold">
+                이미 회사에 다니고 있어요
+                <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[11px] font-normal text-muted-foreground">부가 기능</span>
+              </span>
+              <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">
+                체크하면 추천과 함께 현재 회사와의 적합도 분석(Fit Score · 이직 타이밍 지수)을 볼 수 있습니다.
+                취업 준비 중이라면 체크하지 않아도 됩니다.
+              </span>
+            </span>
+          </label>
 
-        <Field label="현재 회사에서 일한 기간" error={errors.tenureMonths}>
-          <div className="grid grid-cols-2 gap-3">
-            <UnitInput unit="년">
-              <input
-                type="number"
-                inputMode="numeric"
-                className={cn(inputCls, "pr-10")}
-                placeholder="0"
-                min={0}
-                max={40}
-                value={form.tenureYears}
-                onChange={set("tenureYears")}
-              />
-            </UnitInput>
-            <UnitInput unit="개월">
-              <input
-                type="number"
-                inputMode="numeric"
-                className={cn(inputCls, "pr-14")}
-                placeholder="0"
-                min={0}
-                max={11}
-                value={form.tenureMonths}
-                onChange={set("tenureMonths")}
-              />
-            </UnitInput>
-          </div>
-        </Field>
+          {form.employed ? (
+            <div className="mt-5 space-y-6 border-t pt-5">
+              <Field
+                label="현재 회사"
+                error={errors.currentCompanyId}
+                hint={
+                  form.currentCompanyId === OTHER_COMPANY_ID
+                    ? `목록에 없는 회사입니다. 비교 대상 ${companies.length}개사의 중앙값(업계 평균 프로필)으로 비교합니다.`
+                    : undefined
+                }
+              >
+                <select className={inputCls} value={form.currentCompanyId} onChange={set("currentCompanyId")}>
+                  {companies.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} · {c.industry}
+                    </option>
+                  ))}
+                  <option value={OTHER_COMPANY_ID}>목록에 없음</option>
+                </select>
+              </Field>
 
-        <div className="grid gap-6 sm:grid-cols-2">
-          <Field label="근무 지역" optional>
-            <select className={inputCls} value={form.region} onChange={set("region")}>
-              <option value="">선택 안 함</option>
-              {REGIONS.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <Field label="편도 통근 시간" optional error={errors.commuteMinutes}>
-            <UnitInput unit="분">
-              <input
-                type="number"
-                inputMode="numeric"
-                className={cn(inputCls, "pr-10")}
-                placeholder="예: 45"
-                value={form.commuteMinutes}
-                onChange={set("commuteMinutes")}
-              />
-            </UnitInput>
-          </Field>
-        </div>
+              <Field label="현재 연봉" error={errors.currentSalary} hint="세전 기준. 1,000 ~ 50,000만원">
+                <UnitInput unit="만원">
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={cn(inputCls, "pr-16")}
+                    placeholder="예: 7000"
+                    value={form.currentSalary}
+                    onChange={set("currentSalary")}
+                    aria-invalid={!!errors.currentSalary}
+                  />
+                </UnitInput>
+              </Field>
+
+              <Field label="현재 회사 근속기간" error={errors.tenureMonths}>
+                <div className="grid grid-cols-2 gap-3">
+                  <UnitInput unit="년">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      className={cn(inputCls, "pr-10")}
+                      placeholder="0"
+                      min={0}
+                      max={40}
+                      value={form.tenureYears}
+                      onChange={set("tenureYears")}
+                    />
+                  </UnitInput>
+                  <UnitInput unit="개월">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      className={cn(inputCls, "pr-14")}
+                      placeholder="0"
+                      min={0}
+                      max={11}
+                      value={form.tenureMonths}
+                      onChange={set("tenureMonths")}
+                    />
+                  </UnitInput>
+                </div>
+              </Field>
+
+              <div className="grid gap-6 sm:grid-cols-2">
+                <Field label="근무 지역" optional>
+                  <select className={inputCls} value={form.region} onChange={set("region")}>
+                    <option value="">선택 안 함</option>
+                    {REGIONS.map((r) => (
+                      <option key={r} value={r}>
+                        {r}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="편도 통근 시간" optional error={errors.commuteMinutes}>
+                  <UnitInput unit="분">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      className={cn(inputCls, "pr-10")}
+                      placeholder="예: 45"
+                      value={form.commuteMinutes}
+                      onChange={set("commuteMinutes")}
+                    />
+                  </UnitInput>
+                </Field>
+              </div>
+            </div>
+          ) : null}
+        </section>
 
         <Button type="submit" size="xl" className="w-full">
-          지금 회사와의 적합도 보기
+          {form.employed ? "현재 회사 Fit 분석하기" : "나에게 맞는 회사 보기"}
         </Button>
       </form>
     </div>

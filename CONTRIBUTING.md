@@ -11,7 +11,13 @@ npm install
 npm run dev          # http://localhost:3000
 ```
 
-`.env` 설정은 **필요 없습니다.** DART 스냅샷(`data/companies.raw.json`)이 이미 커밋되어 있고 런타임에 외부 API를 호출하지 않습니다. 회사 지표를 다시 수집할 때만 `.env.local.example`을 참고해 키를 넣으세요.
+`.env` 설정 없이도 바로 돌아갑니다 — Supabase 에 닿지 않으면 저장소의 JSON 으로 폴백하고 푸터에 그 사실을 표시합니다. 다만 **최신 회사 지표를 보려면** 팀에서 공유한 Supabase 값을 넣으세요:
+
+```bash
+cp .env.local.example .env.local   # NEXT_PUBLIC_SUPABASE_URL / ANON_KEY 입력
+```
+
+DART 키는 **필요 없습니다.** DART 스냅샷(`data/companies.raw.json`)이 이미 커밋되어 있고 런타임에 외부 API를 호출하지 않습니다. 회사 지표를 다시 수집할 때만 `.env.local.example`을 참고해 키를 넣으세요.
 
 ## 브랜치 전략
 
@@ -49,7 +55,8 @@ PR을 올리면 GitHub Actions가 위 세 가지 + `next build`를 자동으로 
 |---|---|---|
 | 계산 엔진 | `src/lib/*.ts` | 바꾸면 **반드시 `npm test`**. 특히 `persona.test.ts`가 데모 시나리오를 지킵니다 |
 | 화면 | `src/app/*/page.tsx`, `src/components/**` | 페이지 단위로 나눠 잡으면 거의 안 겹칩니다 |
-| 데이터 | `data/*.json` | `companies.raw.json`은 **손으로 고치지 마세요** (`npm run fetch:dart` 산출물) |
+| 데이터 | Supabase `companies` 테이블 | **회사 지표는 이제 코드가 아니라 DB 에 있습니다.** 대시보드에서 고치면 배포 없이 반영돼요 — 디자인 PR 과 충돌하지 않습니다 |
+| 데이터(폴백) | `data/*.json` | Supabase 가 죽었을 때의 폴백 겸 테스트 픽스처. `companies.raw.json`은 **손으로 고치지 마세요** (`npm run fetch:dart` 산출물) |
 | 문서 | `PLAN.md`, `README.md` | |
 
 ## 반드시 지킬 것
