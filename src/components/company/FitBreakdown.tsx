@@ -34,7 +34,7 @@ export function FitBreakdown({ assessment, company }: { assessment: AssessmentRe
                 <div className={cn("h-full rounded-full", AXIS_COLOR[axis])} style={{ width: `${score}%` }} />
               </div>
               <span className="w-8 text-right text-sm font-medium tabular-nums">{score}</span>
-              <AxisScoreInfo axis={axis} source={company.scoreSources[axis]} score={score} />
+              <AxisScoreInfo axis={axis} company={company} />
             </div>
           </div>
         );

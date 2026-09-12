@@ -41,8 +41,9 @@ export function MoveTimingPanel({ result, currentFit, bestFit, tenureMonths, sal
     <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div className="text-sm font-medium text-muted-foreground">이직 검토 지수</div>
-          <div className="flex items-baseline gap-1">
+          <div className="text-base font-bold">지금 이직을 검토할 만한가요?</div>
+          <div className="mt-0.5 text-xs text-muted-foreground">이직 검토 지수</div>
+          <div className="mt-1 flex items-baseline gap-1">
             <span className="text-4xl font-bold tabular-nums">{result.score}</span>
             <span className="text-muted-foreground">/ 100</span>
           </div>
@@ -53,7 +54,7 @@ export function MoveTimingPanel({ result, currentFit, bestFit, tenureMonths, sal
       </div>
       <p className="text-sm text-muted-foreground">{MOVE_BAND_META[result.band].description}</p>
 
-      <div className="space-y-2 rounded-xl border p-3">
+      <div className="space-y-2 rounded-2xl bg-muted/60 p-4">
         {rows.map((r) => (
           <div key={r.label} className="grid grid-cols-[1fr_auto_auto] items-center gap-x-3 text-sm">
             <span className={cn(r.excluded && "text-muted-foreground line-through")}>{r.label}</span>

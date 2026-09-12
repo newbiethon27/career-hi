@@ -26,7 +26,7 @@ export function AxisBar({ axis, value, max = 100, suffix = "", highlight, right,
       <span className={cn("w-8 shrink-0 text-sm", highlight ? "font-semibold" : "text-muted-foreground")}>
         {AXIS_LABEL[axis]}
       </span>
-      <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-muted">
+      <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted">
         <div
           className={cn("h-full rounded-full transition-[width] duration-500", AXIS_COLOR[axis])}
           style={{ width: `${width}%` }}

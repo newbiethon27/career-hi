@@ -15,61 +15,83 @@ interface Props {
   compact?: boolean;
 }
 
+const RANK_STYLE = ["bg-accent text-accent-foreground", "bg-muted text-foreground", "bg-muted text-foreground"];
+
 /** 추천 카드: Fit + 이유 + 주의점. 트레이드오프를 같이 보여주는 것이 신뢰를 만든다. */
 export function CompanyCard({ rank, rec, baselineName, baselineFit, compact }: Props) {
   const tone = fitTone(rec.fit.fit);
-  return (
-    <div className="flex flex-col gap-4 rounded-2xl border bg-card p-5">
+  const body = (
+    <>
       <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="text-xs text-muted-foreground">
-            {rank}위 · {rec.company.industry}
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className={cn("rounded-full px-2 py-0.5 text-xs font-bold", RANK_STYLE[rank - 1] ?? RANK_STYLE[2])}>{rank}위</span>
+            <span className="truncate text-xs text-muted-foreground">{rec.company.industry}</span>
           </div>
-          <h3 className="text-xl font-semibold">{rec.company.name}</h3>
+          <h3 className="mt-2 text-xl font-bold leading-tight">{rec.company.name}</h3>
         </div>
-        <div className="text-right">
-          <div className={cn("text-3xl font-bold tabular-nums", tone.text)}>{rec.fit.fit}</div>
-          <div className="text-xs text-muted-foreground">
-            {baselineName} {baselineFit} 대비 <span className="font-medium text-foreground">{signed(rec.fitDelta)}</span>
-          </div>
+        <div className={cn("flex size-16 shrink-0 flex-col items-center justify-center rounded-full", tone.bg)}>
+          <span className={cn("text-2xl font-bold leading-none tabular-nums", tone.text)}>{rec.fit.fit}</span>
+          <span className="mt-0.5 text-[10px] text-muted-foreground">Fit</span>
         </div>
       </div>
+      <div className="text-xs text-muted-foreground">
+        {baselineName} {baselineFit} 대비{" "}
+        <span className={cn("font-semibold", rec.fitDelta > 0 ? "text-emerald-700 dark:text-emerald-400" : "text-foreground")}>
+          {signed(rec.fitDelta)}
+        </span>
+      </div>
+    </>
+  );
 
-      {!compact ? (
-        <>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-            {AXES.map((axis) => (
-              <div key={axis} className="flex items-center gap-2 text-sm">
-                <span className="w-7 text-muted-foreground">{AXIS_LABEL[axis]}</span>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
-                  <div className={cn("h-full rounded-full", AXIS_COLOR[axis])} style={{ width: `${rec.company.scores[axis]}%` }} />
-                </div>
-                <span className="w-7 text-right tabular-nums">{rec.company.scores[axis]}</span>
-                <AxisScoreInfo axis={axis} source={rec.company.scoreSources[axis]} score={rec.company.scores[axis]} />
-              </div>
-            ))}
+  if (compact) {
+    return (
+      <Link
+        href={`/compare?target=${rec.company.id}`}
+        className="flex flex-col gap-3 rounded-3xl border bg-card p-5 shadow-soft transition-colors hover:border-primary/50 hover:bg-accent/30"
+      >
+        {body}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-5 rounded-3xl border bg-card p-5 shadow-soft sm:p-6">
+      {body}
+
+      <div className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
+        {AXES.map((axis) => (
+          <div key={axis} className="flex items-center gap-2 text-sm">
+            <span className="w-7 text-muted-foreground">{AXIS_LABEL[axis]}</span>
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+              <div className={cn("h-full rounded-full", AXIS_COLOR[axis])} style={{ width: `${rec.company.scores[axis]}%` }} />
+            </div>
+            <span className="w-7 text-right tabular-nums">{rec.company.scores[axis]}</span>
+            <AxisScoreInfo axis={axis} company={rec.company} />
           </div>
+        ))}
+      </div>
 
-          <div className="space-y-2 text-sm">
-            {rec.reasons.map((r) => (
-              <p key={r} className="flex gap-2">
-                <span className="shrink-0 font-semibold text-emerald-600 dark:text-emerald-400">✓ 추천 이유</span>
-                <span>{r}</span>
-              </p>
-            ))}
+      <div className="space-y-3 rounded-2xl bg-accent/50 p-4 text-sm leading-relaxed">
+        <div>
+          <div className="mb-1 text-[13px] font-bold text-accent-foreground">왜 추천했나요?</div>
+          {rec.reasons.map((r) => (
+            <p key={r}>{r}</p>
+          ))}
+        </div>
+        {rec.cautions.length > 0 ? (
+          <div>
+            <div className="mb-1 text-[13px] font-bold text-amber-700 dark:text-amber-400">함께 확인해 주세요</div>
             {rec.cautions.map((c) => (
-              <p key={c} className="flex gap-2">
-                <span className="shrink-0 font-semibold text-amber-600 dark:text-amber-400">△ 함께 확인</span>
-                <span>{c}</span>
-              </p>
+              <p key={c}>{c}</p>
             ))}
           </div>
+        ) : null}
+      </div>
 
-          <Link href={`/compare?target=${rec.company.id}`} className={cn(buttonVariants({ variant: "outline" }), "self-start")}>
-            지표 자세히 비교 →
-          </Link>
-        </>
-      ) : null}
+      <Link href={`/compare?target=${rec.company.id}`} className={cn(buttonVariants({ variant: "outline", size: "lg" }), "self-start")}>
+        지표 자세히 비교
+      </Link>
     </div>
   );
 }
