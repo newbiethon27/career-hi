@@ -53,11 +53,17 @@ function buildCompanies(): Company[] {
   }));
 }
 
-/** 단일 진입점. 모듈 로드 시 1회 계산해 캐싱한다 (12개사 × 4축 < 1ms). */
-export const COMPANIES: ScoredCompany[] = buildScoredCompanies(buildCompanies());
+/**
+ * 저장소 JSON 으로 만든 회사 목록.
+ *
+ * 런타임의 소스는 Supabase 이고(`lib/companies.server.ts`), 이 값은 두 군데서 쓰인다:
+ *   1. Supabase 에 닿지 않을 때의 폴백 — 데모 중 화면이 비는 것을 막는다
+ *   2. 테스트 픽스처 — 네트워크 없이 재현 가능한 점수 검증
+ */
+export const FALLBACK_COMPANIES: ScoredCompany[] = buildScoredCompanies(buildCompanies());
 
-export function getCompany(id: string): ScoredCompany | undefined {
-  return COMPANIES.find((c) => c.id === id);
-}
+/** @deprecated 화면에서는 useCompanies() 를 쓰세요. 테스트 픽스처용 별칭입니다. */
+export const COMPANIES = FALLBACK_COMPANIES;
 
-export const DART_GENERATED_AT: string | null = (rawJson as { generatedAt: string | null }).generatedAt;
+export const FALLBACK_DART_GENERATED_AT: string | null = (rawJson as { generatedAt: string | null })
+  .generatedAt;

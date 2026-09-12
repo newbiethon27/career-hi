@@ -7,9 +7,9 @@ import { PageSkeleton } from "@/components/common/PageSkeleton";
 import { CompareTable } from "@/components/compare/CompareTable";
 import { RawMetricsTable } from "@/components/company/RawMetricsTable";
 import { buttonVariants } from "@/components/ui/button";
-import { getCompany } from "@/lib/companies";
 import { buildCompareSummary } from "@/lib/explain";
 import { computeFit } from "@/lib/fit";
+import { useCompany } from "@/store/CompaniesContext";
 import { useAnalysis } from "@/store/useAnalysis";
 import { useGuard } from "@/store/useGuard";
 
@@ -25,6 +25,8 @@ function CompareInner() {
   const { ready } = useGuard("profile");
   const analysis = useAnalysis();
   const params = useSearchParams();
+  const requested = params.get("target");
+  const requestedCompany = useCompany(requested); // 훅은 early return 앞에서
   if (!ready || !analysis) return <PageSkeleton />;
 
   // 비교 기준: 재직자는 현재 회사, 구직자는 업계 평균
@@ -32,9 +34,8 @@ function CompareInner() {
   const baseline = rec.baseline;
 
   // target 이 없거나 잘못되면 추천 1위 → 없으면 풀 1위
-  const requested = params.get("target");
   const fallback = rec.top[0]?.company ?? rec.ranked[0]?.company ?? null;
-  const target = (requested ? getCompany(requested) : null) ?? fallback;
+  const target = requestedCompany ?? fallback;
 
   if (!target || target.id === baseline.company.id) {
     return (

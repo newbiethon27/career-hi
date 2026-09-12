@@ -4,12 +4,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PageSkeleton } from "@/components/common/PageSkeleton";
 import { Button } from "@/components/ui/button";
-import { COMPANIES } from "@/lib/companies";
 import { JOB_FAMILY_LABEL, OTHER_COMPANY_ID, REGIONS } from "@/lib/constants";
 import { profileSchema } from "@/lib/storage";
 import { isEmployed, type JobFamily, type UserProfile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useCareer } from "@/store/CareerContext";
+import { useCompanies } from "@/store/CompaniesContext";
 import { useGuard } from "@/store/useGuard";
 
 const inputCls =
@@ -62,6 +62,7 @@ export default function ProfilePage() {
 
 function ProfileForm({ initial }: { initial: FormState }) {
   const { setProfile } = useCareer();
+  const { companies } = useCompanies();
   const router = useRouter();
   const [form, setForm] = useState<FormState>(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -150,7 +151,7 @@ function ProfileForm({ initial }: { initial: FormState }) {
                 }
               >
                 <select className={inputCls} value={form.currentCompanyId} onChange={set("currentCompanyId")}>
-                  {COMPANIES.map((c) => (
+                  {companies.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name} · {c.industry}
                     </option>
