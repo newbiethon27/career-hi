@@ -74,9 +74,7 @@ export function StepHeader() {
               ) : null}
             </div>
           </>
-        ) : (
-          <span className="rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground">베타</span>
-        )}
+        ) : null}
       </div>
     </header>
   );
