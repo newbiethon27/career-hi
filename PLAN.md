@@ -1,4 +1,4 @@
-# Career AtoZ — 해커톤 MVP 개발 계획
+# 커리어Hi — 해커톤 MVP 개발 계획
 
 > 작성일: 2026-09-12
 
@@ -26,7 +26,7 @@
 
 ### 한 줄 정의
 
-**Career AtoZ는 "나에게 맞는 회사"를 설명 가능한 점수로 계산해주는 Career Decision Service다.**
+**커리어Hi는 "나에게 맞는 회사"를 설명 가능한 점수로 계산해주는 Career Decision Service다.**
 
 ### 핵심 메시지
 
@@ -40,7 +40,7 @@
 
 ### 차별점 (기존 서비스 대비)
 
-| | 기존 서비스 | Career AtoZ |
+| | 기존 서비스 | 커리어Hi |
 |---|---|---|
 | 출발점 | 회사 | **사용자 성향** |
 | 출력 | 회사 정보 / 공고 목록 | **나와의 적합도 점수** |
@@ -495,9 +495,9 @@ export interface MoveTimingResult {
 
 | key | 값 |
 |---|---|
-| `caz:assessment` | `AssessmentResult` JSON |
-| `caz:profile` | `UserProfile` JSON |
-| `caz:answers-progress` | 진행 중 답변 `{ index, answers }` |
+| `chi:assessment` | `AssessmentResult` JSON |
+| `chi:profile` | `UserProfile` JSON |
+| `chi:answers-progress` | 진행 중 답변 `{ index, answers }` |
 
 읽을 때 반드시 zod로 `safeParse`. 실패 시 해당 키 삭제 후 초기 상태로 취급 (스키마 변경 시 앱이 죽는 것을 방지 — 해커톤 중 자주 발생).
 
@@ -1016,16 +1016,16 @@ data/companies.manual.json ── import ────→  (메모리 계산)
 
 **설치 명령 (참고용, 이번 단계에서 실행하지 않음)**
 ```
-npx create-next-app@latest career-atoz --typescript --tailwind --app --eslint --src-dir
+npx create-next-app@latest career-hi --typescript --tailwind --app --eslint --src-dir
 npx shadcn@latest init
 npx shadcn@latest add button card progress badge select separator
 npm i zod
 npm i -D vitest
 ```
 
-> ⚠️ 로컬 작업 폴더명 `09_12 second`에 **공백**이 있어 npm 패키지명으로 쓸 수 없다. 하위 폴더 `career-atoz/`를 만들어 그 안에 앱을 생성한다.
+> ⚠️ 로컬 작업 폴더명 `09_12 second`에 **공백**이 있어 npm 패키지명으로 쓸 수 없다. 하위 폴더 `career-hi/`를 만들어 그 안에 앱을 생성한다.
 >
-> **구현 후:** `career-atoz/`가 그대로 GitHub 저장소 루트가 되었고 `PLAN.md`도 그 안으로 옮겼다. 클론하면 공백 없는 `career-atoz/`로 떨어지므로 이 문제는 사라진다.
+> **구현 후:** 이 폴더가 그대로 GitHub 저장소 루트가 되었고 `PLAN.md`도 그 안으로 옮겼다. 클론하면 공백 없는 `career-hi/`로 떨어지므로 이 문제는 사라진다.
 
 ### 12.2 상태 관리 구조
 
@@ -1134,7 +1134,7 @@ npm run fetch:dart   → data/companies.raw.json 갱신
 ## 14. Suggested Directory Structure
 
 ```
-career-atoz/                           ← 저장소 루트 (= Next.js 앱 루트)
+career-hi/                             ← 저장소 루트 (= Next.js 앱 루트)
 ├── PLAN.md                         ← 이 문서
 ├── README.md
 ├── .github/workflows/ci.yml        ← PR 시 typecheck·lint·test·build
@@ -1212,7 +1212,7 @@ career-atoz/                           ← 저장소 루트 (= Next.js 앱 루�
 
 **T1. 프로젝트 부트스트랩**
 - 목적: 실행 가능한 Next.js 앱 확보
-- 작업: `career-atoz/`에 create-next-app (TS/Tailwind/App Router/src-dir), shadcn init + 6개 컴포넌트 추가, zod·vitest 설치, `vitest.config.ts` 작성
+- 작업: `career-hi/`에 create-next-app (TS/Tailwind/App Router/src-dir), shadcn init + 6개 컴포넌트 추가, zod·vitest 설치, `vitest.config.ts` 작성
 - 선행: 없음
 - 완료 조건: `npm run dev` 실행 시 기본 페이지 표시, `npm test`가 0개 테스트로 통과
 
@@ -1461,7 +1461,7 @@ it('같은 답변과 데이터는 동일한 결과를 만든다', () => {
 | 2 | **Balance 데이터가 공공데이터에 없음** | 확정 | 중 | 설계에 이미 반영. `manual` source + `데모 추정치` 배지 + note 근거. 숨기지 않고 드러내는 것이 오히려 신뢰를 만든다 |
 | 3 | **Fit 점수 변별력 부족** (전 회사 68~76에 밀집) | 중 | 높음 | `SMOOTHING_ALPHA` 1개 상수만 1.0→0.5로 조정(§8.3). 그래도 부족하면 `normalize` 출력 하한을 30→20으로. **다른 로직은 건드리지 않는다** |
 | 4 | **시간 부족** | 높음 | 높음 | T1~T19가 P0. 잘라낼 순서: ① radar chart(T21) ② `/compare` 요약 문장 ③ `/recommend` 분리(대시보드에 병합) ④ 애니메이션. **T10 테스트는 자르지 않는다** — 자르면 숫자 디버깅에 더 오래 걸린다 |
-| 5 | **디렉터리명 `09_12 second`의 공백** → create-next-app 패키지명 오류 | 확정 | 저 | 하위 폴더 `career-atoz/`에 앱 생성 (§12.1). 이 폴더가 저장소 루트가 되어 클론 시에는 문제 없음 |
+| 5 | **디렉터리명 `09_12 second`의 공백** → create-next-app 패키지명 오류 | 확정 | 저 | 하위 폴더 `career-hi/`에 앱 생성 (§12.1). 이 폴더가 저장소 루트가 되어 클론 시에는 문제 없음 |
 | 6 | **데모 중 새로고침으로 상태 소실** | 중 | 높음 | localStorage 저장 + 데모 프리셋 버튼(T22). 시연자가 검사를 다시 풀 일이 없다 |
 | 7 | **추천 결과가 0건** | 중 | 중 | 버그 아님. §4.6 빈 상태 UI로 처리하고, 오히려 "현재 회사가 잘 맞습니다"라는 정직한 답으로 활용 |
 | 8 | **심사위원의 "숫자 근거가 뭐냐" 질문** | 높음 | 중 | 모든 화면에 출처 배지 + 대시보드에 계산 구성요소 전부 노출. "가중합 한 줄"이라 그 자리에서 설명 가능 |

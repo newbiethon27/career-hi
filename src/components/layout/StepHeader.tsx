@@ -20,7 +20,7 @@ export function StepHeader() {
     <header className="border-b bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-4 py-3">
         <Link href="/" className="text-base font-semibold tracking-tight">
-          Career <span className="text-primary">AtoZ</span>
+          커리어<span className="text-primary">Hi</span>
         </Link>
         <nav className="hidden items-center gap-1 text-xs sm:flex">
           {STEPS.map((s, i) => (

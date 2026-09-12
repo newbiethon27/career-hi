@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Career AtoZ — 같은 직무, 같은 연봉이어도 좋은 회사는 사람마다 다릅니다",
+  title: "커리어Hi — 같은 직무, 같은 연봉이어도 좋은 회사는 사람마다 다릅니다",
   description:
     "커리어 성향을 진단하고 현재 회사와의 적합도를 점수로 확인하세요. 설명 가능한 Career Decision Service.",
 };
