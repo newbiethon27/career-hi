@@ -43,7 +43,7 @@ function rowToCompany(r: CompanyRow): Company {
         : { value: r.worklife_index, source: "manual", note: r.worklife_note ?? undefined },
   };
   return {
-    id: r.id,
+    id: r.slug!, // loadCompanies에서 문자열 slug를 검증한 행만 전달한다.
     name: r.name,
     corpCode: r.corp_code ?? undefined,
     industry: r.industry,
@@ -78,7 +78,10 @@ export async function loadCompanies(): Promise<CompaniesPayload> {
     if (error) throw new Error(error.message);
     if (!data || data.length === 0) throw new Error("companies 테이블이 비어 있습니다. 시드 SQL을 실행했나요?");
 
-    return { companies: buildScoredCompanies(data.map(rowToCompany)), origin: "supabase", fallbackReason: null };
+    const appRows = data.filter((r) => typeof r.slug === "string" && r.slug.trim().length > 0);
+    if (appRows.length === 0) throw new Error("앱용 회사 slug가 없습니다. 수정된 Supabase setup.sql을 실행하세요.");
+
+    return { companies: buildScoredCompanies(appRows.map(rowToCompany)), origin: "supabase", fallbackReason: null };
   } catch (e) {
     const reason = e instanceof Error ? e.message : String(e);
     console.error("[companies] Supabase 조회 실패 → JSON 폴백:", reason);

@@ -10,8 +10,11 @@
 --
 -- 실행: Supabase 대시보드 → SQL Editor 에 붙여넣고 Run. 그다음 0002 시드를 실행.
 
+begin;
+
 create table if not exists public.companies (
-  id                    text primary key,
+  id                    uuid primary key default gen_random_uuid(),
+  slug                  text unique,
   name                  text not null,
   industry              text not null,
   corp_code             text,
@@ -35,6 +38,34 @@ create table if not exists public.companies (
   sort_order            smallint not null default 0,
   updated_at            timestamptz not null default now()
 );
+
+-- 기존 테이블에는 CREATE TABLE IF NOT EXISTS가 새 컬럼을 추가하지 않는다.
+-- 이전 스키마로 생성된 테이블도 사용할 수 있도록 누락 컬럼만 추가한다.
+-- 기존 행·컬럼 값·컬럼 타입은 변경하지 않는다.
+-- 기존 UUID와 이를 참조하는 외래키는 유지한다. 앱 식별자는 slug로 분리한다.
+alter table public.companies
+  add column if not exists slug text,
+  add column if not exists dart_corp_code text,
+  add column if not exists name text,
+  add column if not exists industry text,
+  add column if not exists corp_code text,
+  add column if not exists job_families text[] not null default '{}',
+  add column if not exists worklife_index smallint check (worklife_index between 0 and 100),
+  add column if not exists worklife_note text,
+  add column if not exists dart_as_of text,
+  add column if not exists avg_salary_manwon integer,
+  add column if not exists avg_tenure_years numeric(4,1),
+  add column if not exists employee_count integer,
+  add column if not exists employee_count_prev integer,
+  add column if not exists revenue bigint,
+  add column if not exists revenue_prev bigint,
+  add column if not exists operating_profit bigint,
+  add column if not exists operating_profit_prev bigint,
+  add column if not exists sort_order smallint not null default 0,
+  add column if not exists updated_at timestamptz not null default now();
+
+create unique index if not exists companies_app_slug_unique on public.companies (slug);
+comment on column public.companies.slug is '앱용 문자열 ID (예: samsung-electronics). DB id와 외래키는 변경하지 않는다.';
 
 comment on table  public.companies                   is '커리어Hi 비교 대상 회사. 지표를 고쳐도 앱 배포가 필요 없다.';
 comment on column public.companies.worklife_index    is '워라밸 0~100. 공공데이터가 없어 사람이 입력한 추정치 — 근거는 worklife_note 에 남긴다.';
@@ -63,3 +94,5 @@ create policy "companies are publicly readable"
   on public.companies for select
   to anon, authenticated
   using (true);
+
+commit;

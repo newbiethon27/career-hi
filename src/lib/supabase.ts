@@ -12,6 +12,7 @@ export const isSupabaseConfigured = supabase !== null;
 /** companies 테이블 한 행. 컬럼명은 supabase/migrations/0001_companies_schema.sql 과 1:1. */
 export interface CompanyRow {
   id: string;
+  slug: string | null; // 앱의 회사 ID. DB UUID는 프로필·시나리오 외래키용으로 유지한다.
   name: string;
   industry: string;
   corp_code: string | null;
