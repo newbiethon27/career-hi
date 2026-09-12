@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { PageSkeleton } from "@/components/common/PageSkeleton";
 import { CompanyCard } from "@/components/company/CompanyCard";
+import { RankingTable } from "@/components/company/RankingTable";
 import { buttonVariants } from "@/components/ui/button";
 import { CAREER_TYPE_META, MIN_FIT_MARGIN } from "@/lib/constants";
 import { JOB_FAMILY_LABEL } from "@/lib/constants";
@@ -82,23 +83,9 @@ export default function RecommendPage() {
           전체 순위 보기 <span className="ml-2 text-xs font-normal text-muted-foreground">{rec.poolSize}개사</span>
         </summary>
         <div className="border-t">
-          <table className="w-full text-sm">
-            <tbody>
-              {rec.ranked.map((r) => (
-                <tr key={r.company.id} className="border-b last:border-0">
-                  <td className="w-10 px-5 py-2 text-muted-foreground tabular-nums">{r.fit.rankInPool}</td>
-                  <td className="py-2">
-                    <Link href={`/compare?target=${r.company.id}`} className="hover:underline">
-                      {r.company.name}
-                    </Link>
-                    <span className="ml-2 text-xs text-muted-foreground">{r.company.industry}</span>
-                  </td>
-                  <td className="px-5 py-2 text-right font-medium tabular-nums">{r.fit.fit}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <RankingTable ranked={rec.ranked} assessment={assessment} baselineLabel={baseline.label} baselineFit={baseline.fit.fit} />
         </div>
+        <p className="border-t px-5 py-3 text-xs text-muted-foreground">회사 이름을 누르면 축별 점수와 근거를 펼쳐 볼 수 있습니다.</p>
       </details>
 
       {current ? (

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AXIS_COLOR } from "@/components/common/AxisBar";
-import { SourceBadge } from "@/components/common/SourceBadge";
+import { AxisScoreInfo } from "@/components/common/AxisScoreInfo";
 import { fitTone } from "@/components/common/ScoreHero";
 import { buttonVariants } from "@/components/ui/button";
 import { AXES, AXIS_LABEL, type Recommendation } from "@/lib/types";
@@ -45,7 +45,7 @@ export function CompanyCard({ rank, rec, baselineName, baselineFit, compact }: P
                   <div className={cn("h-full rounded-full", AXIS_COLOR[axis])} style={{ width: `${rec.company.scores[axis]}%` }} />
                 </div>
                 <span className="w-7 text-right tabular-nums">{rec.company.scores[axis]}</span>
-                <SourceBadge source={rec.company.scoreSources[axis]} />
+                <AxisScoreInfo axis={axis} source={rec.company.scoreSources[axis]} score={rec.company.scores[axis]} />
               </div>
             ))}
           </div>
