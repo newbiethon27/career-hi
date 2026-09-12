@@ -45,7 +45,7 @@ export function CompanyCard({ rank, rec, baselineName, baselineFit, compact }: P
                   <div className={cn("h-full rounded-full", AXIS_COLOR[axis])} style={{ width: `${rec.company.scores[axis]}%` }} />
                 </div>
                 <span className="w-7 text-right tabular-nums">{rec.company.scores[axis]}</span>
-                <AxisScoreInfo axis={axis} source={rec.company.scoreSources[axis]} score={rec.company.scores[axis]} />
+                <AxisScoreInfo axis={axis} company={rec.company} />
               </div>
             ))}
           </div>

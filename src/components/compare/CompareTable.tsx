@@ -74,12 +74,12 @@ export function CompareTable({ base, baseLabel, target, baseFit, targetFit }: Pr
               <td className="px-4 py-3">{AXIS_LABEL[axis]}</td>
               <td className="px-4 py-3 text-right">
                 <span className="inline-flex items-center gap-1.5 tabular-nums">
-                  {base.scores[axis]} <AxisScoreInfo axis={axis} source={base.scoreSources[axis]} score={base.scores[axis]} />
+                  {base.scores[axis]} <AxisScoreInfo axis={axis} company={base} />
                 </span>
               </td>
               <td className="px-4 py-3 text-right">
                 <span className="inline-flex items-center gap-1.5 tabular-nums">
-                  {target.scores[axis]} <AxisScoreInfo axis={axis} source={target.scoreSources[axis]} score={target.scores[axis]} />
+                  {target.scores[axis]} <AxisScoreInfo axis={axis} company={target} />
                 </span>
               </td>
               <td className="px-4 py-3 text-right">

@@ -110,7 +110,7 @@ function FragmentRow({
                       <div className={cn("h-full rounded-full", AXIS_COLOR[axis])} style={{ width: `${company.scores[axis]}%` }} />
                     </div>
                     <span className="w-7 shrink-0 text-right tabular-nums">{company.scores[axis]}</span>
-                    <AxisScoreInfo axis={axis} source={company.scoreSources[axis]} score={company.scores[axis]} align="left" />
+                    <AxisScoreInfo axis={axis} company={company} align="left" />
                     <span className="text-muted-foreground">
                       내 중요도 {assessment.percent[axis]}% → Fit 기여 {fit.contributions[axis].toFixed(1)}점
                     </span>
