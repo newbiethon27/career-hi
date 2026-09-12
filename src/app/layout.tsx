@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import { CareerProvider } from "@/store/CareerContext";
 import { StepHeader } from "@/components/layout/StepHeader";
 import { DisclaimerFooter } from "@/components/layout/DisclaimerFooter";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const notoSansKr = Noto_Sans_KR({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -16,14 +18,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "커리어Hi — 같은 직무, 같은 연봉이어도 좋은 회사는 사람마다 다릅니다",
+  title: "커리어Hi — 나에게 맞는 회사, 연봉만으로 정해지지 않으니까",
   description:
-    "커리어 성향을 진단하고 현재 회사와의 적합도를 점수로 확인하세요. 설명 가능한 Career Decision Service.",
+    "10개 질문으로 내가 회사를 고를 때 무엇을 중요하게 보는지 알아보고, 지금 회사와 얼마나 맞는지 점수와 이유로 확인하세요.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="ko" className={`${notoSansKr.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <CareerProvider>
           <StepHeader />

@@ -1,50 +1,76 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { DemoPresets } from "@/components/landing/DemoPresets";
+import { QUESTION_COUNT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
+const CRITERIA = ["보상", "워라밸", "고용 안정", "회사 성장"];
+
 const STEPS = [
-  { n: "①", title: "성향 진단", desc: "10개의 trade-off 질문으로 보상·균형·안정·성장 중 무엇을 우선하는지 파악합니다." },
-  { n: "②", title: "현재 회사 Fit 분석", desc: "지금 다니는 회사가 내 성향과 얼마나 맞는지 0~100 점수와 근거로 확인합니다." },
-  { n: "③", title: "맞는 회사 추천", desc: "같은 기준으로 점수화한 회사 중 더 적합한 곳을 이유·주의점과 함께 제시합니다." },
+  {
+    title: "내가 중요하게 보는 기준 찾기",
+    desc: "둘 중 하나를 고르는 질문에 답하면, 보상·균형·안정·성장 중 무엇을 먼저 보는지 정리됩니다.",
+  },
+  {
+    title: "지금 회사와 얼마나 맞는지 확인",
+    desc: "내 기준으로 지금 다니는 회사를 점수로 확인합니다. 점수가 나온 이유도 함께 보여드려요.",
+  },
+  {
+    title: "나에게 더 맞는 회사 보기",
+    desc: "같은 기준으로 다른 회사를 비교해, 더 맞는 곳이 있으면 이유와 주의할 점을 함께 알려드려요.",
+  },
 ];
 
 export default function LandingPage() {
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-16 sm:py-24">
-      <section className="space-y-6 text-center">
-        <div className="inline-flex items-center rounded-full border px-3 py-1 text-xs text-muted-foreground">
-          Career Decision Service · 설명 가능한 추천
-        </div>
-        <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
-          같은 직무, 같은 연봉이어도
+    <div className="mx-auto w-full max-w-3xl px-4 py-14 sm:py-20">
+      <section className="space-y-7">
+        <h1 className="text-[2rem] font-bold leading-[1.35] tracking-tight sm:text-5xl sm:leading-[1.3]">
+          나에게 맞는 회사는
           <br />
-          <span className="text-primary">좋은 회사는 사람마다 다릅니다</span>
+          연봉만으로 <span className="text-highlight text-primary">정해지지 않으니까</span>
         </h1>
-        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-          10개 질문으로 당신의 커리어 성향을 진단하고, 지금 회사와의 적합도를 점수로 확인하세요. 약 2분.
+        <p className="max-w-xl text-[17px] leading-relaxed text-muted-foreground">
+          같은 직무, 같은 연봉이어도 좋은 회사는 사람마다 다릅니다. 내가 무엇을 중요하게 보는지 먼저 알아보고, 지금 회사와
+          얼마나 맞는지 점수와 이유로 확인해 보세요.
         </p>
-        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link href="/assessment" className={cn(buttonVariants({ size: "lg" }), "h-12 px-8 text-base")}>
-            진단 시작하기
+        <div className="flex flex-wrap gap-2">
+          {CRITERIA.map((c) => (
+            <span key={c} className="rounded-full bg-accent px-3.5 py-1.5 text-sm font-medium text-accent-foreground">
+              {c}
+            </span>
+          ))}
+        </div>
+        <div className="flex flex-col gap-3 pt-1 sm:max-w-xs">
+          <Link href="/assessment" className={cn(buttonVariants({ size: "xl" }), "w-full")}>
+            2분 만에 진단 시작하기
           </Link>
+          <p className="text-center text-[13px] text-muted-foreground">
+            질문 {QUESTION_COUNT}개 · 가입 없이 바로 · 결과는 이 브라우저에만 저장
+          </p>
         </div>
       </section>
 
-      <section className="mt-20 grid gap-4 sm:grid-cols-3">
-        {STEPS.map((s) => (
-          <div key={s.n} className="rounded-2xl border bg-card p-5">
-            <div className="text-2xl font-bold text-primary">{s.n}</div>
-            <div className="mt-2 text-base font-semibold">{s.title}</div>
-            <p className="mt-1 text-sm text-muted-foreground">{s.desc}</p>
-          </div>
-        ))}
+      <section className="mt-16">
+        <h2 className="text-lg font-bold">이렇게 진행돼요</h2>
+        <ol className="mt-4 grid gap-3 sm:grid-cols-3">
+          {STEPS.map((s, i) => (
+            <li key={s.title} className="rounded-2xl border bg-card p-5 shadow-soft">
+              <div className="flex size-8 items-center justify-center rounded-full bg-accent text-sm font-bold text-accent-foreground">
+                {i + 1}
+              </div>
+              <div className="mt-3 text-[15px] font-bold leading-snug">{s.title}</div>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+            </li>
+          ))}
+        </ol>
       </section>
 
-      <section className="mt-16 rounded-2xl border border-dashed p-5">
-        <div className="text-sm font-semibold">데모로 바로 보기</div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          같은 회사·같은 직군·같은 연봉의 두 개발자. 성향만 다르면 결과가 어떻게 달라지는지 바로 확인합니다.
+      <section className="mt-12 rounded-2xl border border-dashed border-primary/30 bg-card/60 p-5 sm:p-6">
+        <div className="text-[15px] font-bold">결과를 먼저 구경해 볼까요?</div>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+          같은 회사, 같은 직군, 같은 연봉인 두 사람입니다. 중요하게 보는 기준만 다를 때 결과가 어떻게 달라지는지 바로 볼 수
+          있어요.
         </p>
         <DemoPresets />
       </section>

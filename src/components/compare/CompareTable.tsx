@@ -36,9 +36,9 @@ export function CompareTable({ current, target, currentFit, targetFit }: Props) 
   const m1 = current.metrics;
   const m2 = target.metrics;
   return (
-    <div className="overflow-x-auto rounded-2xl border">
+    <div className="overflow-x-auto rounded-3xl border bg-card shadow-soft">
       <table className="w-full text-sm">
-        <thead className="bg-muted/50 text-xs text-muted-foreground">
+        <thead className="bg-muted/60 text-xs text-muted-foreground">
           <tr>
             <th className="px-4 py-3 text-left font-medium">지표</th>
             <th className="px-4 py-3 text-right font-medium">
@@ -49,8 +49,8 @@ export function CompareTable({ current, target, currentFit, targetFit }: Props) 
           </tr>
         </thead>
         <tbody>
-          <tr className="border-t bg-primary/5 font-semibold">
-            <td className="px-4 py-3">Fit Score</td>
+          <tr className="border-t bg-accent/50 font-semibold">
+            <td className="px-4 py-3">적합도</td>
             <td className="px-4 py-3 text-right tabular-nums">{currentFit}</td>
             <td className="px-4 py-3 text-right tabular-nums">{targetFit}</td>
             <td className="px-4 py-3 text-right">
