@@ -70,23 +70,26 @@ export function buildDiagnosis(
   );
 }
 
-/** /compare 하단 요약 */
-export function buildCompareSummary(
-  a: AssessmentResult,
-  base: Baseline,
-  target: ScoredCompany,
-  fitDelta: number,
-): string {
+/** /compare 하단 요약 — 문장이 아니라 키워드로 정리한다 (조사 처리 불필요, 한눈에 읽힌다) */
+export interface CompareDigest {
+  verdict: "better" | "similar" | "worse";
+  fitDelta: number;
+  /** 내가 우선하는 기준 (1·2순위) */
+  priorities: Axis[];
+  /** 비교 회사가 앞서는 축, 격차 큰 순 */
+  up: Array<{ axis: Axis; delta: number }>;
+  /** 기준 회사가 앞서는 축, 격차 큰 순 */
+  down: Array<{ axis: Axis; delta: number }>;
+}
+
+export function buildCompareDigest(a: AssessmentResult, base: Baseline, target: ScoredCompany, fitDelta: number): CompareDigest {
   const cur = base.company.scores;
-  const up = AXES.filter((ax) => target.scores[ax] - cur[ax] >= 5);
-  const down = AXES.filter((ax) => target.scores[ax] - cur[ax] <= -5);
-  const head =
-    fitDelta > 0
-      ? `${L[a.primaryAxis]}과(와) ${L[a.secondaryAxis]}을(를) 우선한다면 ${target.name}이(가) ${base.label}보다 적합합니다(적합도 ${signed(fitDelta)}).`
-      : `${target.name}은(는) ${base.label}보다 적합도가 높지 않습니다(적합도 ${signed(fitDelta)}).`;
-  const upText = up.length ? ` ${up.map((ax) => L[ax]).join("·")} 축이 높아집니다.` : "";
-  const downText = down.length
-    ? ` 대신 ${down.map((ax) => `${L[ax]}(${signed(target.scores[ax] - cur[ax])})`).join(", ")} 축에서는 ${base.label}이(가) 앞섭니다.`
-    : "";
-  return head + upText + downText;
+  const deltas = AXES.map((axis) => ({ axis, delta: target.scores[axis] - cur[axis] }));
+  return {
+    verdict: fitDelta >= 5 ? "better" : fitDelta <= -5 ? "worse" : "similar",
+    fitDelta,
+    priorities: [a.primaryAxis, a.secondaryAxis],
+    up: deltas.filter((d) => d.delta >= 5).sort((x, y) => y.delta - x.delta),
+    down: deltas.filter((d) => d.delta <= -5).sort((x, y) => x.delta - y.delta),
+  };
 }

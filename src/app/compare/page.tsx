@@ -7,9 +7,12 @@ import { PageSkeleton } from "@/components/common/PageSkeleton";
 import { CompareTable } from "@/components/compare/CompareTable";
 import { RawMetricsTable } from "@/components/company/RawMetricsTable";
 import { buttonVariants } from "@/components/ui/button";
-import { buildCompareSummary } from "@/lib/explain";
+import { buildCompareDigest } from "@/lib/explain";
 import { computeFit } from "@/lib/fit";
-import { cn } from "@/lib/utils";
+import { AXIS_LABEL } from "@/lib/types";
+import { cn, signed } from "@/lib/utils";
+
+const VERDICT_LABEL = { better: "더 맞음", similar: "비슷함", worse: "덜 맞음" } as const;
 import { useCompany } from "@/store/CompaniesContext";
 import { useAnalysis } from "@/store/useAnalysis";
 import { useGuard } from "@/store/useGuard";
@@ -51,7 +54,7 @@ function CompareInner() {
 
   const targetFit = computeFit(assessment.weights, target.scores, target.id).fit;
   const fitDelta = targetFit - baseline.fit.fit;
-  const summary = buildCompareSummary(assessment, { company: baseline.company, label: baseline.label }, target, fitDelta);
+  const digest = buildCompareDigest(assessment, { company: baseline.company, label: baseline.label }, target, fitDelta);
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-10 sm:py-14">
@@ -84,9 +87,56 @@ function CompareInner() {
 
       <CompareTable base={baseline.company} baseLabel={baseline.label} target={target} baseFit={baseline.fit.fit} targetFit={targetFit} />
 
-      <section className="rounded-3xl bg-accent/60 p-5 text-[15px] leading-relaxed sm:p-6">
-        <div className="mb-2 text-sm font-bold text-accent-foreground">정리하면</div>
-        {summary}
+      <section className="rounded-3xl bg-accent/60 p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="text-sm font-bold text-accent-foreground">정리하면</div>
+          <span
+            className={cn(
+              "rounded-full px-3 py-1 text-sm font-bold tabular-nums",
+              digest.verdict === "better"
+                ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-200"
+                : digest.verdict === "worse"
+                  ? "bg-muted text-muted-foreground"
+                  : "bg-card text-foreground",
+            )}
+          >
+            적합도 {signed(digest.fitDelta)} · {VERDICT_LABEL[digest.verdict]}
+          </span>
+        </div>
+        <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-[7.5rem_1fr] sm:gap-x-4">
+          <dt className="text-muted-foreground">내 우선순위</dt>
+          <dd className="flex flex-wrap gap-1.5">
+            {digest.priorities.map((ax, i) => (
+              <span key={ax} className={cn("rounded-full px-2.5 py-1 font-semibold", i === 0 ? "bg-primary text-primary-foreground" : "bg-card")}>
+                {AXIS_LABEL[ax]}
+              </span>
+            ))}
+          </dd>
+          <dt className="text-muted-foreground">{target.name} 우세</dt>
+          <dd className="flex flex-wrap gap-1.5">
+            {digest.up.length ? (
+              digest.up.map(({ axis, delta }) => (
+                <span key={axis} className="rounded-full bg-emerald-100 px-2.5 py-1 font-semibold text-emerald-800 tabular-nums dark:bg-emerald-900/50 dark:text-emerald-200">
+                  {AXIS_LABEL[axis]} {signed(delta)}
+                </span>
+              ))
+            ) : (
+              <span className="text-muted-foreground">없음</span>
+            )}
+          </dd>
+          <dt className="text-muted-foreground">{baseline.label} 우세</dt>
+          <dd className="flex flex-wrap gap-1.5">
+            {digest.down.length ? (
+              digest.down.map(({ axis, delta }) => (
+                <span key={axis} className="rounded-full bg-card px-2.5 py-1 font-semibold tabular-nums">
+                  {AXIS_LABEL[axis]} {signed(delta)}
+                </span>
+              ))
+            ) : (
+              <span className="text-muted-foreground">없음</span>
+            )}
+          </dd>
+        </dl>
       </section>
 
       <details className="rounded-3xl border bg-card shadow-soft">
