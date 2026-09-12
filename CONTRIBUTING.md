@@ -37,7 +37,7 @@ git push -u origin feat/내작업     # 그리고 GitHub 에서 dev 로 PR
 
 ```bash
 npm test          # vitest — 계산 로직 + 데모 페르소나 회귀 테스트
-npm run typecheck # tsc --noEmit
+npm run typecheck # next typegen + tsc --noEmit
 npm run lint      # eslint
 ```
 
