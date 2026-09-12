@@ -50,3 +50,19 @@ export function median(nums: number[]): number | null {
   const mid = Math.floor(s.length / 2);
   return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
 }
+
+/** 마지막 글자에 받침이 있는지. 한글·숫자만 판단하고 그 외는 null. */
+export function hasFinalConsonant(word: string): boolean | null {
+  const ch = word.trim().slice(-1);
+  if (!ch) return null;
+  const code = ch.charCodeAt(0);
+  if (code >= 0xac00 && code <= 0xd7a3) return (code - 0xac00) % 28 !== 0;
+  // 숫자는 읽는 소리 기준: 0(영)·1(일)·3(삼)·6(육)·7(칠)·8(팔) 에 받침이 있다
+  if (ch >= "0" && ch <= "9") return "013678".includes(ch);
+  return null;
+}
+
+/** 받침에 맞는 조사를 붙인다. 판단할 수 없으면 모음형을 쓴다. 예: josa("지표", "은", "는") → "지표는" */
+export function josa(word: string, withJong: string, withoutJong: string): string {
+  return `${word}${hasFinalConsonant(word) ? withJong : withoutJong}`;
+}

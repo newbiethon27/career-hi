@@ -1,5 +1,5 @@
 import { AXIS_COLOR } from "@/components/common/AxisBar";
-import { SourceBadge } from "@/components/common/SourceBadge";
+import { AxisScoreInfo } from "@/components/common/AxisScoreInfo";
 import { sortAxesByScore } from "@/lib/assessment";
 import { AXIS_LABEL, type AssessmentResult, type ScoredCompany } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -34,7 +34,7 @@ export function FitBreakdown({ assessment, company }: { assessment: AssessmentRe
                 <div className={cn("h-full rounded-full", AXIS_COLOR[axis])} style={{ width: `${score}%` }} />
               </div>
               <span className="w-8 text-right text-sm font-medium tabular-nums">{score}</span>
-              <SourceBadge source={company.scoreSources[axis]} />
+              <AxisScoreInfo axis={axis} source={company.scoreSources[axis]} score={score} />
             </div>
           </div>
         );

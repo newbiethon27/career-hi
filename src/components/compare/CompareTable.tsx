@@ -1,4 +1,7 @@
-import { SourceBadge } from "@/components/common/SourceBadge";
+import { AxisScoreInfo } from "@/components/common/AxisScoreInfo";
+import { InfoPopover } from "@/components/common/InfoPopover";
+import { MetricInfo, type MetricKey } from "@/components/common/MetricInfo";
+import { FIT_METHOD } from "@/lib/method";
 import { AXES, AXIS_LABEL, type ScoredCompany, type Sourced } from "@/lib/types";
 import { cn, formatManwon, signed } from "@/lib/utils";
 
@@ -23,11 +26,11 @@ function Diff({ d, suffix = "" }: { d: number | null; suffix?: string }) {
   );
 }
 
-function Cell({ m, fmt }: { m: Sourced<number> | null; fmt: (v: number) => string }) {
+function Cell({ label, metric, m, fmt }: { label: string; metric: MetricKey; m: Sourced<number> | null; fmt: (v: number) => string }) {
   if (!m) return <span className="text-muted-foreground">—</span>;
   return (
     <span className="inline-flex items-center gap-1.5 tabular-nums">
-      {fmt(m.value)} <SourceBadge source={m.source} asOf={m.asOf} />
+      {fmt(m.value)} <MetricInfo label={label} metric={metric} m={m} />
     </span>
   );
 }
@@ -52,7 +55,14 @@ export function CompareTable({ base, baseLabel, target, baseFit, targetFit }: Pr
         </thead>
         <tbody>
           <tr className="border-t bg-primary/5 font-semibold">
-            <td className="px-4 py-3">Fit Score</td>
+            <td className="px-4 py-3">
+              <span className="inline-flex items-center gap-1.5">
+                Fit Score
+                <InfoPopover label="Fit 점수 산출 방식 설명" align="left" title="Fit 점수는 이렇게 나왔습니다">
+                  {FIT_METHOD}
+                </InfoPopover>
+              </span>
+            </td>
             <td className="px-4 py-3 text-right tabular-nums">{baseFit}</td>
             <td className="px-4 py-3 text-right tabular-nums">{targetFit}</td>
             <td className="px-4 py-3 text-right">
@@ -64,12 +74,12 @@ export function CompareTable({ base, baseLabel, target, baseFit, targetFit }: Pr
               <td className="px-4 py-3">{AXIS_LABEL[axis]}</td>
               <td className="px-4 py-3 text-right">
                 <span className="inline-flex items-center gap-1.5 tabular-nums">
-                  {base.scores[axis]} <SourceBadge source={base.scoreSources[axis]} />
+                  {base.scores[axis]} <AxisScoreInfo axis={axis} source={base.scoreSources[axis]} score={base.scores[axis]} />
                 </span>
               </td>
               <td className="px-4 py-3 text-right">
                 <span className="inline-flex items-center gap-1.5 tabular-nums">
-                  {target.scores[axis]} <SourceBadge source={target.scoreSources[axis]} />
+                  {target.scores[axis]} <AxisScoreInfo axis={axis} source={target.scoreSources[axis]} score={target.scores[axis]} />
                 </span>
               </td>
               <td className="px-4 py-3 text-right">
@@ -80,10 +90,10 @@ export function CompareTable({ base, baseLabel, target, baseFit, targetFit }: Pr
           <tr className="border-t border-t-2">
             <td className="px-4 py-3">1인 평균 급여액</td>
             <td className="px-4 py-3 text-right">
-              <Cell m={m1.avgSalaryManwon} fmt={formatManwon} />
+              <Cell label="1인 평균 급여액" metric="avgSalaryManwon" m={m1.avgSalaryManwon} fmt={formatManwon} />
             </td>
             <td className="px-4 py-3 text-right">
-              <Cell m={m2.avgSalaryManwon} fmt={formatManwon} />
+              <Cell label="1인 평균 급여액" metric="avgSalaryManwon" m={m2.avgSalaryManwon} fmt={formatManwon} />
             </td>
             <td className="px-4 py-3 text-right">
               {(() => {
@@ -95,10 +105,10 @@ export function CompareTable({ base, baseLabel, target, baseFit, targetFit }: Pr
           <tr className="border-t">
             <td className="px-4 py-3">평균 근속연수</td>
             <td className="px-4 py-3 text-right">
-              <Cell m={m1.avgTenureYears} fmt={(v) => `${v.toFixed(1)}년`} />
+              <Cell label="평균 근속연수" metric="avgTenureYears" m={m1.avgTenureYears} fmt={(v) => `${v.toFixed(1)}년`} />
             </td>
             <td className="px-4 py-3 text-right">
-              <Cell m={m2.avgTenureYears} fmt={(v) => `${v.toFixed(1)}년`} />
+              <Cell label="평균 근속연수" metric="avgTenureYears" m={m2.avgTenureYears} fmt={(v) => `${v.toFixed(1)}년`} />
             </td>
             <td className="px-4 py-3 text-right">
               {(() => {
@@ -110,10 +120,10 @@ export function CompareTable({ base, baseLabel, target, baseFit, targetFit }: Pr
           <tr className="border-t">
             <td className="px-4 py-3">직원 수</td>
             <td className="px-4 py-3 text-right">
-              <Cell m={m1.employeeCount} fmt={(v) => `${v.toLocaleString("ko-KR")}명`} />
+              <Cell label="직원 수" metric="employeeCount" m={m1.employeeCount} fmt={(v) => `${v.toLocaleString("ko-KR")}명`} />
             </td>
             <td className="px-4 py-3 text-right">
-              <Cell m={m2.employeeCount} fmt={(v) => `${v.toLocaleString("ko-KR")}명`} />
+              <Cell label="직원 수" metric="employeeCount" m={m2.employeeCount} fmt={(v) => `${v.toLocaleString("ko-KR")}명`} />
             </td>
             <td className="px-4 py-3 text-right text-muted-foreground">—</td>
           </tr>
