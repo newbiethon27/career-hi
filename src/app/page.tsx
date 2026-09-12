@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { DemoPresets } from "@/components/landing/DemoPresets";
 import { QUESTION_COUNT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -56,15 +55,7 @@ export default function LandingPage() {
         </ol>
       </section>
 
-      <section className="mt-12 rounded-2xl border border-dashed border-primary/30 bg-card/60 p-5 sm:p-6">
-        <div className="text-[15px] font-bold">데모로 바로 보기</div>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-          같은 직군·같은 조건의 두 사람. 성향만 다르면 추천이 어떻게 달라지는지 바로 확인합니다.
-        </p>
-        <DemoPresets />
-      </section>
-
-      <section className="mt-6 rounded-2xl border bg-card p-5 shadow-soft">
+      <section className="mt-12 rounded-2xl border bg-card p-5 shadow-soft">
         <div className="text-sm font-semibold">
           이미 회사에 다니고 있나요?
           <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[11px] font-normal text-muted-foreground">부가 기능</span>
