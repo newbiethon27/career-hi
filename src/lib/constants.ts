@@ -97,9 +97,9 @@ export const DISCLAIMER = {
 } as const;
 
 export const STORAGE_KEYS = {
-  assessment: "caz:assessment",
-  profile: "caz:profile",
-  progress: "caz:answers-progress",
+  assessment: "chi:assessment",
+  profile: "chi:profile",
+  progress: "chi:answers-progress",
 } as const;
 
 export const OTHER_COMPANY_ID = "other";

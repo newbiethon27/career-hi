@@ -5,8 +5,8 @@
 ## 시작하기
 
 ```bash
-git clone https://github.com/newbiethon27/career-atoz.git
-cd career-atoz
+git clone https://github.com/newbiethon27/career-hi.git
+cd career-hi
 npm install
 npm run dev          # http://localhost:3000
 ```
