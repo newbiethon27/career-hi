@@ -1,0 +1,151 @@
+{
+  "_comment": "회사 골격 + Balance(worklifeIndex). worklifeIndex 는 공공데이터가 없어 사람이 입력한 값이며 UI 에서 항상 '데모 추정치' 배지가 붙는다. 근거는 note 에 남긴다. 넥슨코리아·우아한형제들은 비상장 외감법인으로 DART 직원현황이 없어 유니버스에서 제외했다 (값을 지어내지 않는다).",
+  "companies": [
+    {
+      "id": "samsung-electronics",
+      "name": "삼성전자",
+      "corpCode": "00126380",
+      "industry": "반도체·전자",
+      "jobFamilies": [
+        "dev",
+        "data",
+        "pm",
+        "design",
+        "marketing"
+      ],
+      "worklifeIndex": 58,
+      "note": "제조·반도체 산업군 기준 추정치"
+    },
+    {
+      "id": "sk-hynix",
+      "name": "SK하이닉스",
+      "corpCode": "00164779",
+      "industry": "반도체",
+      "jobFamilies": [
+        "dev",
+        "data",
+        "pm"
+      ],
+      "worklifeIndex": 58,
+      "note": "제조·반도체 산업군 기준 추정치"
+    },
+    {
+      "id": "naver",
+      "name": "NAVER",
+      "corpCode": "00266961",
+      "industry": "인터넷",
+      "jobFamilies": [
+        "dev",
+        "data",
+        "pm",
+        "design",
+        "marketing"
+      ],
+      "worklifeIndex": 75,
+      "note": "인터넷 산업군 기준 추정치"
+    },
+    {
+      "id": "kakao",
+      "name": "카카오",
+      "corpCode": "00258801",
+      "industry": "인터넷",
+      "jobFamilies": [
+        "dev",
+        "data",
+        "pm",
+        "design",
+        "marketing"
+      ],
+      "worklifeIndex": 75,
+      "note": "인터넷 산업군 기준 추정치"
+    },
+    {
+      "id": "krafton",
+      "name": "크래프톤",
+      "corpCode": "00760971",
+      "industry": "게임",
+      "jobFamilies": [
+        "dev",
+        "data",
+        "pm",
+        "design",
+        "marketing"
+      ],
+      "worklifeIndex": 62,
+      "note": "게임 산업군 기준 추정치"
+    },
+    {
+      "id": "ncsoft",
+      "name": "엔씨소프트",
+      "corpCode": "00261443",
+      "industry": "게임",
+      "jobFamilies": [
+        "dev",
+        "data",
+        "pm",
+        "design",
+        "marketing"
+      ],
+      "worklifeIndex": 62,
+      "note": "게임 산업군 기준 추정치"
+    },
+    {
+      "id": "samsung-sds",
+      "name": "삼성SDS",
+      "corpCode": "00126186",
+      "industry": "IT서비스",
+      "jobFamilies": [
+        "dev",
+        "data",
+        "pm",
+        "design"
+      ],
+      "worklifeIndex": 66,
+      "note": "IT서비스 산업군 기준 추정치"
+    },
+    {
+      "id": "lg-electronics",
+      "name": "LG전자",
+      "corpCode": "00401731",
+      "industry": "전자",
+      "jobFamilies": [
+        "dev",
+        "data",
+        "pm",
+        "design",
+        "marketing"
+      ],
+      "worklifeIndex": 60,
+      "note": "제조·전자 산업군 기준 추정치"
+    },
+    {
+      "id": "hyundai-motor",
+      "name": "현대자동차",
+      "corpCode": "00164742",
+      "industry": "자동차",
+      "jobFamilies": [
+        "dev",
+        "data",
+        "pm",
+        "design",
+        "marketing"
+      ],
+      "worklifeIndex": 56,
+      "note": "제조·자동차 산업군 기준 추정치"
+    },
+    {
+      "id": "kt",
+      "name": "KT",
+      "corpCode": "00190321",
+      "industry": "통신",
+      "jobFamilies": [
+        "dev",
+        "data",
+        "pm",
+        "marketing"
+      ],
+      "worklifeIndex": 70,
+      "note": "통신 산업군 기준 추정치"
+    }
+  ]
+}

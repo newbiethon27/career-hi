@@ -1,69 +1,53 @@
-import Image from "next/image";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { DemoPresets } from "@/components/landing/DemoPresets";
+import { cn } from "@/lib/utils";
 
-export default function Home() {
+const STEPS = [
+  { n: "①", title: "성향 진단", desc: "10개의 trade-off 질문으로 보상·균형·안정·성장 중 무엇을 우선하는지 파악합니다." },
+  { n: "②", title: "현재 회사 Fit 분석", desc: "지금 다니는 회사가 내 성향과 얼마나 맞는지 0~100 점수와 근거로 확인합니다." },
+  { n: "③", title: "맞는 회사 추천", desc: "같은 기준으로 점수화한 회사 중 더 적합한 곳을 이유·주의점과 함께 제시합니다." },
+];
+
+export default function LandingPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="mx-auto w-full max-w-4xl px-4 py-16 sm:py-24">
+      <section className="space-y-6 text-center">
+        <div className="inline-flex items-center rounded-full border px-3 py-1 text-xs text-muted-foreground">
+          Career Decision Service · 설명 가능한 추천
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
+          같은 직무, 같은 연봉이어도
+          <br />
+          <span className="text-primary">좋은 회사는 사람마다 다릅니다</span>
+        </h1>
+        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+          10개 질문으로 당신의 커리어 성향을 진단하고, 지금 회사와의 적합도를 점수로 확인하세요. 약 2분.
+        </p>
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Link href="/assessment" className={cn(buttonVariants({ size: "lg" }), "h-12 px-8 text-base")}>
+            진단 시작하기
+          </Link>
         </div>
-      </main>
+      </section>
+
+      <section className="mt-20 grid gap-4 sm:grid-cols-3">
+        {STEPS.map((s) => (
+          <div key={s.n} className="rounded-2xl border bg-card p-5">
+            <div className="text-2xl font-bold text-primary">{s.n}</div>
+            <div className="mt-2 text-base font-semibold">{s.title}</div>
+            <p className="mt-1 text-sm text-muted-foreground">{s.desc}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="mt-16 rounded-2xl border border-dashed p-5">
+        <div className="text-sm font-semibold">데모로 바로 보기</div>
+        <p className="mt-1 text-sm text-muted-foreground">
+          같은 회사·같은 직군·같은 연봉의 두 개발자. 성향만 다르면 결과가 어떻게 달라지는지 바로 확인합니다.
+        </p>
+        <DemoPresets />
+      </section>
     </div>
   );
 }

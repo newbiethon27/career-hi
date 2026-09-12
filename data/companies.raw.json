@@ -1,0 +1,125 @@
+{
+  "generatedAt": "2026-09-12T08:51:44.272Z",
+  "companies": {
+    "samsung-electronics": {
+      "corpCode": "00126380",
+      "asOf": "2025",
+      "employeeCount": 128881,
+      "avgSalaryManwon": 15706,
+      "avgTenureYears": 13.7,
+      "employeeCountPrev": 129480,
+      "revenue": 333605938,
+      "revenuePrev": 300870903,
+      "operatingProfit": 43601051,
+      "operatingProfitPrev": 32725961
+    },
+    "sk-hynix": {
+      "corpCode": "00164779",
+      "asOf": "2025",
+      "employeeCount": 34549,
+      "avgSalaryManwon": 18500,
+      "avgTenureYears": 13.4,
+      "employeeCountPrev": 32390,
+      "revenue": 97146675,
+      "revenuePrev": 66192960,
+      "operatingProfit": 47206319,
+      "operatingProfitPrev": 23467319
+    },
+    "naver": {
+      "corpCode": "00266961",
+      "asOf": "2025",
+      "employeeCount": 5047,
+      "avgSalaryManwon": 14552,
+      "avgTenureYears": 7.7,
+      "employeeCountPrev": 4583,
+      "revenue": 12035007,
+      "revenuePrev": 10737719,
+      "operatingProfit": 2208138,
+      "operatingProfitPrev": 1979263
+    },
+    "kakao": {
+      "corpCode": "00258801",
+      "asOf": "2025",
+      "employeeCount": 3922,
+      "avgSalaryManwon": 10872,
+      "avgTenureYears": 6.3,
+      "employeeCountPrev": 4028,
+      "revenue": 8099148,
+      "revenuePrev": 7864033,
+      "operatingProfit": 732037,
+      "operatingProfitPrev": 495278
+    },
+    "ncsoft": {
+      "corpCode": "00261443",
+      "asOf": "2025",
+      "employeeCount": 3262,
+      "avgSalaryManwon": 11687,
+      "avgTenureYears": 7.5,
+      "employeeCountPrev": 3832,
+      "revenue": 1506925,
+      "revenuePrev": 1578123,
+      "operatingProfit": 16078,
+      "operatingProfitPrev": -109215
+    },
+    "samsung-sds": {
+      "corpCode": "00126186",
+      "asOf": "2025",
+      "employeeCount": 11219,
+      "avgSalaryManwon": 13829,
+      "avgTenureYears": 17.2,
+      "employeeCountPrev": 11387,
+      "revenue": 13929868,
+      "revenuePrev": 13828232,
+      "operatingProfit": 957103,
+      "operatingProfitPrev": 911097
+    },
+    "lg-electronics": {
+      "corpCode": "00401731",
+      "asOf": "2025",
+      "employeeCount": 34144,
+      "avgSalaryManwon": 11759,
+      "avgTenureYears": 13.8,
+      "employeeCountPrev": 35727,
+      "revenue": 89200882,
+      "revenuePrev": 87728182,
+      "operatingProfit": 2478392,
+      "operatingProfitPrev": 3419675
+    },
+    "hyundai-motor": {
+      "corpCode": "00164742",
+      "asOf": "2025",
+      "employeeCount": 72598,
+      "avgSalaryManwon": 13086,
+      "avgTenureYears": 15.8,
+      "employeeCountPrev": 75137,
+      "revenue": 186254472,
+      "revenuePrev": 175231153,
+      "operatingProfit": 11467851,
+      "operatingProfitPrev": 14239592
+    },
+    "kt": {
+      "corpCode": "00190321",
+      "asOf": "2025",
+      "employeeCount": 14701,
+      "avgSalaryManwon": 11860,
+      "avgTenureYears": 19.3,
+      "employeeCountPrev": 16927,
+      "revenue": 28244161,
+      "revenuePrev": 26431204,
+      "operatingProfit": 2469133,
+      "operatingProfitPrev": 809471
+    },
+    "krafton": {
+      "corpCode": "00760971",
+      "asOf": "2025",
+      "employeeCount": 2118,
+      "avgSalaryManwon": 12893,
+      "avgTenureYears": 3.2,
+      "employeeCountPrev": 1903,
+      "revenue": 3326554,
+      "revenuePrev": 2709774,
+      "operatingProfit": 1054381,
+      "operatingProfitPrev": 1182488
+    }
+  }
+}

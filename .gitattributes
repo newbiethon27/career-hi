@@ -1,0 +1,6 @@
+# 팀원 OS(Windows/macOS)가 섞여도 줄바꿈 때문에 "파일 전체가 바뀐" diff 가 나지 않게 한다.
+* text=auto eol=lf
+
+# 생성물 — diff 를 접어서 PR 리뷰를 가볍게 유지
+package-lock.json linguist-generated=true -diff
+data/companies.raw.json linguist-generated=true
