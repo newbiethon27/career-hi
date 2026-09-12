@@ -3,9 +3,11 @@ import { AXES, AXIS_LABEL, type ScoredCompany, type Sourced } from "@/lib/types"
 import { cn, formatManwon, signed } from "@/lib/utils";
 
 interface Props {
-  current: ScoredCompany;
+  base: ScoredCompany;
+  /** 왼쪽 열 라벨 — 재직자는 "현재", 구직자는 "업계 평균" */
+  baseLabel: string;
   target: ScoredCompany;
-  currentFit: number;
+  baseFit: number;
   targetFit: number;
 }
 
@@ -32,8 +34,8 @@ function Cell({ m, fmt }: { m: Sourced<number> | null; fmt: (v: number) => strin
 
 const metricDiff = (a: Sourced<number> | null, b: Sourced<number> | null) => (a && b ? b.value - a.value : null);
 
-export function CompareTable({ current, target, currentFit, targetFit }: Props) {
-  const m1 = current.metrics;
+export function CompareTable({ base, baseLabel, target, baseFit, targetFit }: Props) {
+  const m1 = base.metrics;
   const m2 = target.metrics;
   return (
     <div className="overflow-x-auto rounded-2xl border">
@@ -42,7 +44,7 @@ export function CompareTable({ current, target, currentFit, targetFit }: Props) 
           <tr>
             <th className="px-4 py-3 text-left font-medium">지표</th>
             <th className="px-4 py-3 text-right font-medium">
-              {current.name} <span className="font-normal">(현재)</span>
+              {base.name} <span className="font-normal">({baseLabel})</span>
             </th>
             <th className="px-4 py-3 text-right font-medium">{target.name}</th>
             <th className="px-4 py-3 text-right font-medium">차이</th>
@@ -51,10 +53,10 @@ export function CompareTable({ current, target, currentFit, targetFit }: Props) 
         <tbody>
           <tr className="border-t bg-primary/5 font-semibold">
             <td className="px-4 py-3">Fit Score</td>
-            <td className="px-4 py-3 text-right tabular-nums">{currentFit}</td>
+            <td className="px-4 py-3 text-right tabular-nums">{baseFit}</td>
             <td className="px-4 py-3 text-right tabular-nums">{targetFit}</td>
             <td className="px-4 py-3 text-right">
-              <Diff d={targetFit - currentFit} />
+              <Diff d={targetFit - baseFit} />
             </td>
           </tr>
           {AXES.map((axis) => (
@@ -62,7 +64,7 @@ export function CompareTable({ current, target, currentFit, targetFit }: Props) 
               <td className="px-4 py-3">{AXIS_LABEL[axis]}</td>
               <td className="px-4 py-3 text-right">
                 <span className="inline-flex items-center gap-1.5 tabular-nums">
-                  {current.scores[axis]} <SourceBadge source={current.scoreSources[axis]} />
+                  {base.scores[axis]} <SourceBadge source={base.scoreSources[axis]} />
                 </span>
               </td>
               <td className="px-4 py-3 text-right">
@@ -71,7 +73,7 @@ export function CompareTable({ current, target, currentFit, targetFit }: Props) 
                 </span>
               </td>
               <td className="px-4 py-3 text-right">
-                <Diff d={target.scores[axis] - current.scores[axis]} />
+                <Diff d={target.scores[axis] - base.scores[axis]} />
               </td>
             </tr>
           ))}

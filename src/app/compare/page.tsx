@@ -27,15 +27,16 @@ function CompareInner() {
   const params = useSearchParams();
   if (!ready || !analysis) return <PageSkeleton />;
 
+  // 비교 기준: 재직자는 현재 회사, 구직자는 업계 평균
   const { assessment, rec } = analysis;
-  const current = rec.current.company;
+  const baseline = rec.baseline;
 
   // target 이 없거나 잘못되면 추천 1위 → 없으면 풀 1위
   const requested = params.get("target");
   const fallback = rec.top[0]?.company ?? rec.ranked[0]?.company ?? null;
   const target = (requested ? getCompany(requested) : null) ?? fallback;
 
-  if (!target || target.id === current.id) {
+  if (!target || target.id === baseline.company.id) {
     return (
       <div className="mx-auto w-full max-w-3xl px-4 py-16 text-center">
         <p className="text-muted-foreground">비교할 회사를 찾을 수 없습니다.</p>
@@ -47,15 +48,15 @@ function CompareInner() {
   }
 
   const targetFit = computeFit(assessment.weights, target.scores, target.id).fit;
-  const fitDelta = targetFit - rec.current.fit.fit;
-  const summary = buildCompareSummary(assessment, current, target, fitDelta);
+  const fitDelta = targetFit - baseline.fit.fit;
+  const summary = buildCompareSummary(assessment, { company: baseline.company, label: baseline.label }, target, fitDelta);
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-8 px-4 py-10 sm:py-14">
       <div>
-        <div className="text-sm text-muted-foreground">현재 회사 vs 비교 대상</div>
+        <div className="text-sm text-muted-foreground">{baseline.label} vs 비교 대상</div>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          {current.name} <span className="text-muted-foreground">vs</span> {target.name}
+          {baseline.company.name} <span className="text-muted-foreground">vs</span> {target.name}
         </h1>
       </div>
 
@@ -71,7 +72,7 @@ function CompareInner() {
         ))}
       </div>
 
-      <CompareTable current={current} target={target} currentFit={rec.current.fit.fit} targetFit={targetFit} />
+      <CompareTable base={baseline.company} baseLabel={baseline.label} target={target} baseFit={baseline.fit.fit} targetFit={targetFit} />
 
       <section className="rounded-2xl border-l-4 border-primary bg-primary/5 p-5 text-[15px] leading-relaxed">{summary}</section>
 
@@ -86,9 +87,11 @@ function CompareInner() {
         <Link href="/recommend" className={buttonVariants({ variant: "ghost" })}>
           ← 추천 목록
         </Link>
-        <Link href="/dashboard" className={buttonVariants({ variant: "ghost" })}>
-          대시보드
-        </Link>
+        {rec.current ? (
+          <Link href="/dashboard" className={buttonVariants({ variant: "ghost" })}>
+            현재 회사 Fit 분석
+          </Link>
+        ) : null}
       </div>
     </div>
   );
