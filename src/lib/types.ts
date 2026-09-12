@@ -57,11 +57,24 @@ export type JobFamily = "dev" | "data" | "pm" | "design" | "marketing";
 
 export interface UserProfile {
   jobFamily: JobFamily;
-  currentCompanyId: string; // "other" 가능
-  currentSalary: number; // 만원
-  tenureMonths: number;
+  // ↓ 재직자 부가 기능(현재 회사 Fit 분석)에서만 채운다. 구직자는 모두 undefined.
+  currentCompanyId?: string; // "other" 가능
+  currentSalary?: number; // 만원
+  tenureMonths?: number;
   region?: string;
   commuteMinutes?: number;
+}
+
+/** 현재 회사 정보를 모두 채운 프로필. 부가 기능 화면은 이 타입만 받는다. */
+export interface EmployedProfile extends UserProfile {
+  currentCompanyId: string;
+  currentSalary: number;
+  tenureMonths: number;
+}
+
+/** 세 값은 항상 함께 저장된다 (storage.profileSchema 가 보장). */
+export function isEmployed(p: UserProfile): p is EmployedProfile {
+  return p.currentCompanyId != null && p.currentSalary != null && p.tenureMonths != null;
 }
 
 // ---------- 회사 ----------

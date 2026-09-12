@@ -9,13 +9,14 @@ import { cn, signed } from "@/lib/utils";
 interface Props {
   rank: number;
   rec: Recommendation;
-  currentName: string;
-  currentFit: number;
+  /** 비교 기준 이름 — 재직자는 현재 회사, 구직자는 업계 평균 */
+  baselineName: string;
+  baselineFit: number;
   compact?: boolean;
 }
 
 /** 추천 카드: Fit + 이유 + 주의점. 트레이드오프를 같이 보여주는 것이 신뢰를 만든다. */
-export function CompanyCard({ rank, rec, currentName, currentFit, compact }: Props) {
+export function CompanyCard({ rank, rec, baselineName, baselineFit, compact }: Props) {
   const tone = fitTone(rec.fit.fit);
   return (
     <div className="flex flex-col gap-4 rounded-2xl border bg-card p-5">
@@ -29,7 +30,7 @@ export function CompanyCard({ rank, rec, currentName, currentFit, compact }: Pro
         <div className="text-right">
           <div className={cn("text-3xl font-bold tabular-nums", tone.text)}>{rec.fit.fit}</div>
           <div className="text-xs text-muted-foreground">
-            {currentName} {currentFit} 대비 <span className="font-medium text-foreground">{signed(rec.fitDelta)}</span>
+            {baselineName} {baselineFit} 대비 <span className="font-medium text-foreground">{signed(rec.fitDelta)}</span>
           </div>
         </div>
       </div>
@@ -65,7 +66,7 @@ export function CompanyCard({ rank, rec, currentName, currentFit, compact }: Pro
           </div>
 
           <Link href={`/compare?target=${rec.company.id}`} className={cn(buttonVariants({ variant: "outline" }), "self-start")}>
-            현재 회사와 비교 →
+            지표 자세히 비교 →
           </Link>
         </>
       ) : null}

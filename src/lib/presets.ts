@@ -1,5 +1,5 @@
 import { scoreAssessment } from "./assessment";
-import type { Answer, AssessmentResult, UserProfile } from "./types";
+import type { Answer, AssessmentResult, EmployedProfile } from "./types";
 
 /**
  * 데모 페르소나. 같은 회사·직군·연봉·근속이지만 성향이 달라 추천이 달라지는 대비를 만든다.
@@ -12,11 +12,11 @@ export interface Preset {
   title: string;
   subtitle: string;
   answers: Answer[];
-  profile: UserProfile;
+  profile: EmployedProfile;
 }
 
-/** 공통 프로필 — 두 페르소나의 유일한 차이는 성향이다 */
-export const SHARED_PROFILE: UserProfile = {
+/** 공통 프로필 — 두 페르소나의 유일한 차이는 성향이다. 데모는 재직자(부가 기능 포함) 시나리오다. */
+export const SHARED_PROFILE: EmployedProfile = {
   jobFamily: "dev",
   currentCompanyId: "samsung-sds",
   currentSalary: 7000,

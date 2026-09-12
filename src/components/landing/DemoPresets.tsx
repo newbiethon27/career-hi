@@ -6,13 +6,13 @@ import { cn } from "@/lib/utils";
 import { PRESETS, type PresetId } from "@/lib/presets";
 import { useCareer } from "@/store/CareerContext";
 
-/** 시연용: 사전 정의된 검사+프로필을 주입하고 대시보드로 직행 (검사 재응시 90초를 없앤다). */
+/** 시연용: 사전 정의된 검사+프로필을 주입하고 추천 화면으로 직행 (검사 재응시 90초를 없앤다). */
 export function DemoPresets() {
   const { loadPreset } = useCareer();
   const router = useRouter();
   const go = (id: PresetId) => {
     loadPreset(id);
-    router.push("/dashboard");
+    router.push("/recommend");
   };
   return (
     <div className="mt-4 grid gap-3 sm:grid-cols-2">

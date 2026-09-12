@@ -50,13 +50,54 @@ describe("recommend", () => {
 
   it("currentCompanyId = 'other' → 합성 회사로 동작", () => {
     const r = recommend(compGrowth, { ...profile, currentCompanyId: "other" }, COMPANIES);
-    expect(r.current.isSynthetic).toBe(true);
-    expect(r.current.fit.fit).toBeGreaterThan(0);
+    expect(r.current?.isSynthetic).toBe(true);
+    expect(r.current?.fit.fit).toBeGreaterThan(0);
   });
 
   it("직군 필터: marketing 은 풀이 dev 보다 작거나 같다", () => {
     const dev = recommend(compGrowth, profile, COMPANIES);
     const mkt = recommend(compGrowth, { ...profile, jobFamily: "marketing" }, COMPANIES);
     expect(mkt.poolSize).toBeLessThanOrEqual(dev.poolSize);
+  });
+});
+
+/** 기본 플로우 = 구직자. 현재 회사 없이도 추천이 나와야 한다. */
+describe("recommend — 구직자 모드 (현재 회사 없음)", () => {
+  const seeker: UserProfile = { jobFamily: "dev" };
+
+  it("current 는 null, baseline 은 업계 평균이다", () => {
+    const r = recommend(compGrowth, seeker, COMPANIES);
+    expect(r.current).toBeNull();
+    expect(r.baseline.label).toBe("업계 평균");
+    expect(r.primaryAxisRank).toBeNull();
+  });
+
+  it("개선폭 필터 없이 Fit 상위 3곳을 추천한다", () => {
+    const r = recommend(compGrowth, seeker, COMPANIES);
+    expect(r.top.length).toBe(Math.min(3, r.poolSize));
+    expect(r.top.map((t) => t.company.id)).toEqual(r.ranked.slice(0, 3).map((t) => t.company.id));
+  });
+
+  it("fitDelta 는 업계 평균 대비 차이다", () => {
+    const r = recommend(compGrowth, seeker, COMPANIES);
+    for (const t of r.top) expect(t.fitDelta).toBe(t.fit.fit - r.baseline.fit.fit);
+  });
+
+  it("현재 회사를 빼지 않으므로 풀이 재직자보다 크거나 같다", () => {
+    const seekerPool = recommend(compGrowth, seeker, COMPANIES).poolSize;
+    const employedPool = recommend(compGrowth, profile, COMPANIES).poolSize;
+    expect(seekerPool).toBeGreaterThan(employedPool);
+  });
+
+  it("성향이 다르면 추천도 달라진다", () => {
+    const stability = scoreAssessment(["B", "B", "A", "B", "A", "A", "A", "B", "B", "A"] as Answer[]);
+    const a = recommend(compGrowth, seeker, COMPANIES);
+    const b = recommend(stability, seeker, COMPANIES);
+    expect(a.top.map((t) => t.company.id)).not.toEqual(b.top.map((t) => t.company.id));
+  });
+
+  it("이유 문장은 업계 평균을 기준으로 쓴다", () => {
+    const r = recommend(compGrowth, seeker, COMPANIES);
+    expect(r.top[0].reasons[0]).toContain("업계 평균");
   });
 });

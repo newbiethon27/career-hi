@@ -3,10 +3,19 @@ import { signed } from "./utils";
 
 const L = AXIS_LABEL;
 
-/** Fit 에 가장 크게 기여한 2개 축 (weights × score) 을 현재 회사 대비 diff 와 함께 문장화 */
+/**
+ * 추천 문장의 비교 기준. 재직자는 현재 회사, 구직자는 업계 평균이다.
+ * label 은 문장에 그대로 들어가므로 "현재 회사" / "업계 평균" 처럼 명사로 넘긴다.
+ */
+export interface Baseline {
+  company: ScoredCompany;
+  label: string;
+}
+
+/** Fit 에 가장 크게 기여한 2개 축 (weights × score) 을 기준 회사 대비 diff 와 함께 문장화 */
 export function buildReasons(
   a: AssessmentResult,
-  current: ScoredCompany,
+  base: Baseline,
   target: ScoredCompany,
 ): string[] {
   const top2 = [...AXES]
@@ -14,30 +23,31 @@ export function buildReasons(
     .sort((x, y) => y.contrib - x.contrib)
     .slice(0, 2);
   const [t1, t2] = top2;
-  const d1 = target.scores[t1.ax] - current.scores[t1.ax];
-  const d2 = target.scores[t2.ax] - current.scores[t2.ax];
+  const d1 = target.scores[t1.ax] - base.company.scores[t1.ax];
+  const d2 = target.scores[t2.ax] - base.company.scores[t2.ax];
   const rank1 = a.primaryAxis === t1.ax ? "가장 중시하는" : "중시하는";
   return [
-    `당신이 ${rank1} ${L[t1.ax]}에서 ${target.scores[t1.ax]}점(현재 ${current.scores[t1.ax]}점, ${signed(d1)}), ` +
-      `${L[t2.ax]}에서 ${target.scores[t2.ax]}점(현재 ${current.scores[t2.ax]}점, ${signed(d2)})입니다.`,
+    `당신이 ${rank1} ${L[t1.ax]}에서 ${target.scores[t1.ax]}점(${base.label} ${base.company.scores[t1.ax]}점, ${signed(d1)}), ` +
+      `${L[t2.ax]}에서 ${target.scores[t2.ax]}점(${base.label} ${base.company.scores[t2.ax]}점, ${signed(d2)})입니다.`,
   ];
 }
 
-/** 현재 회사 대비 가장 크게 떨어지는 축 — 10점 이상 하락할 때만 */
+/** 기준 회사 대비 가장 크게 떨어지는 축 — 10점 이상 하락할 때만 */
 export function buildCautions(
   _a: AssessmentResult,
-  current: ScoredCompany,
+  base: Baseline,
   target: ScoredCompany,
 ): string[] {
+  const cur = base.company.scores;
   let worst: Axis = AXES[0];
   for (const ax of AXES) {
-    if (target.scores[ax] - current.scores[ax] < target.scores[worst] - current.scores[worst]) worst = ax;
+    if (target.scores[ax] - cur[ax] < target.scores[worst] - cur[worst]) worst = ax;
   }
-  const d = target.scores[worst] - current.scores[worst];
-  return d <= -10 ? [`${L[worst]} 축은 현재 회사보다 ${Math.abs(d)}점 낮습니다.`] : [];
+  const d = target.scores[worst] - cur[worst];
+  return d <= -10 ? [`${L[worst]} 축은 ${base.label}보다 ${Math.abs(d)}점 낮습니다.`] : [];
 }
 
-/** 현재 회사 진단 문장. 분기는 2개뿐 — 늘리지 않는다. */
+/** 현재 회사 진단 문장 (재직자 부가 기능 전용). 분기는 2개뿐 — 늘리지 않는다. */
 export function buildDiagnosis(
   a: AssessmentResult,
   current: ScoredCompany,
@@ -63,19 +73,20 @@ export function buildDiagnosis(
 /** /compare 하단 요약 */
 export function buildCompareSummary(
   a: AssessmentResult,
-  current: ScoredCompany,
+  base: Baseline,
   target: ScoredCompany,
   fitDelta: number,
 ): string {
-  const up = AXES.filter((ax) => target.scores[ax] - current.scores[ax] >= 5);
-  const down = AXES.filter((ax) => target.scores[ax] - current.scores[ax] <= -5);
+  const cur = base.company.scores;
+  const up = AXES.filter((ax) => target.scores[ax] - cur[ax] >= 5);
+  const down = AXES.filter((ax) => target.scores[ax] - cur[ax] <= -5);
   const head =
     fitDelta > 0
-      ? `${L[a.primaryAxis]}과(와) ${L[a.secondaryAxis]}을(를) 우선한다면 ${target.name}이(가) 더 적합합니다(적합도 ${signed(fitDelta)}).`
-      : `${target.name}은(는) 현재 회사보다 적합도가 높지 않습니다(적합도 ${signed(fitDelta)}).`;
+      ? `${L[a.primaryAxis]}과(와) ${L[a.secondaryAxis]}을(를) 우선한다면 ${target.name}이(가) ${base.label}보다 적합합니다(적합도 ${signed(fitDelta)}).`
+      : `${target.name}은(는) ${base.label}보다 적합도가 높지 않습니다(적합도 ${signed(fitDelta)}).`;
   const upText = up.length ? ` ${up.map((ax) => L[ax]).join("·")} 축이 높아집니다.` : "";
   const downText = down.length
-    ? ` 대신 ${down.map((ax) => `${L[ax]}(${signed(target.scores[ax] - current.scores[ax])})`).join(", ")} 축에서는 현재 회사가 앞섭니다.`
+    ? ` 대신 ${down.map((ax) => `${L[ax]}(${signed(target.scores[ax] - cur[ax])})`).join(", ")} 축에서는 ${base.label}이(가) 앞섭니다.`
     : "";
   return head + upText + downText;
 }

@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "커리어Hi — 같은 직무, 같은 연봉이어도 좋은 회사는 사람마다 다릅니다",
+  title: "커리어Hi — 어디에 지원해야 할지 모르겠다면, 기준부터",
   description:
-    "커리어 성향을 진단하고 현재 회사와의 적합도를 점수로 확인하세요. 설명 가능한 Career Decision Service.",
+    "커리어 성향을 진단하고, 그 기준으로 나에게 맞는 회사를 이유와 함께 추천받으세요. 설명 가능한 Career Decision Service.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

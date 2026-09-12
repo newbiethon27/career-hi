@@ -39,7 +39,7 @@ export default function ResultPage() {
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Link href="/profile" className={cn(buttonVariants({ size: "lg" }), "h-11 flex-1 text-base")}>
-          현재 회사와의 적합도 확인하기 →
+          나에게 맞는 회사 보기 →
         </Link>
         <Button
           variant="ghost"
@@ -53,6 +53,10 @@ export default function ResultPage() {
           다시 검사하기
         </Button>
       </div>
+
+      <p className="mt-4 text-center text-xs text-muted-foreground">
+        이미 회사에 다니고 있다면 다음 단계에서 현재 회사와의 적합도 분석(부가 기능)도 함께 볼 수 있습니다.
+      </p>
     </div>
   );
 }
