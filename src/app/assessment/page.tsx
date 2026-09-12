@@ -51,28 +51,34 @@ function AssessmentFlow() {
   const pct = Math.round((index / QUESTION_COUNT) * 100);
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:py-16">
-      <div className="mb-8 space-y-2">
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>커리어 성향 진단</span>
-          <span className="tabular-nums">
-            {index + 1} / {QUESTION_COUNT}
+    <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:py-14">
+      <div className="mb-8 space-y-2.5">
+        <div className="flex items-center justify-between text-sm">
+          <span className="font-semibold text-primary">둘 중 하나를 꼭 골라야 한다면?</span>
+          <span className="tabular-nums text-muted-foreground">
+            <span className="font-semibold text-foreground">{index + 1}</span> / {QUESTION_COUNT}
           </span>
         </div>
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+        <div
+          className="h-2 w-full overflow-hidden rounded-full bg-muted"
+          role="progressbar"
+          aria-valuenow={index}
+          aria-valuemin={0}
+          aria-valuemax={QUESTION_COUNT}
+        >
           <div className="h-full rounded-full bg-primary transition-[width] duration-300" style={{ width: `${pct}%` }} />
         </div>
       </div>
 
-      <div key={q.id} className="animate-in fade-in duration-200">
+      <div key={q.id} className="animate-in fade-in slide-in-from-bottom-2 duration-200">
         <QuestionCard question={q} selected={answers[index]} onSelect={select} />
       </div>
 
       <div className="mt-8 flex items-center justify-between">
-        <Button variant="ghost" onClick={back} className={index === 0 ? "invisible" : ""}>
-          ← 이전
+        <Button variant="ghost" size="lg" onClick={back} className={index === 0 ? "invisible" : ""}>
+          이전 질문
         </Button>
-        <span className="text-xs text-muted-foreground">선택하면 바로 다음 질문으로 넘어갑니다</span>
+        <span className="text-xs text-muted-foreground">고르면 바로 다음 질문으로 넘어가요</span>
       </div>
 
       <p className="mt-10 text-xs leading-relaxed text-muted-foreground">{DISCLAIMER.assessment}</p>

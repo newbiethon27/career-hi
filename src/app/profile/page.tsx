@@ -13,7 +13,7 @@ import { useCompanies } from "@/store/CompaniesContext";
 import { useGuard } from "@/store/useGuard";
 
 const inputCls =
-  "h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive";
+  "h-12 w-full rounded-xl border border-input bg-card px-4 text-[15px] outline-none transition-colors placeholder:text-muted-foreground/60 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 aria-invalid:border-destructive";
 
 interface FormState {
   jobFamily: JobFamily;
@@ -102,13 +102,14 @@ function ProfileForm({ initial }: { initial: FormState }) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-xl px-4 py-12 sm:py-16">
-      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">어떤 직군을 목표로 하고 있나요?</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
+    <div className="mx-auto w-full max-w-xl px-4 py-10 sm:py-14">
+      <div className="mb-2 text-sm font-semibold text-primary">직군 선택</div>
+      <h1 className="text-[1.75rem] font-bold leading-snug tracking-tight sm:text-3xl">어떤 직군을 목표로 하고 있나요?</h1>
+      <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
         해당 직군을 채용하는 회사만 비교합니다. 저장은 이 브라우저에만 됩니다.
       </p>
 
-      <form onSubmit={submit} className="mt-8 space-y-5" noValidate>
+      <form onSubmit={submit} className="mt-8 space-y-6 rounded-3xl border bg-card p-5 shadow-soft sm:p-7" noValidate>
         <Field label="직군" error={errors.jobFamily}>
           <select className={inputCls} value={form.jobFamily} onChange={set("jobFamily")}>
             {(Object.keys(JOB_FAMILY_LABEL) as JobFamily[]).map((k) => (
@@ -119,7 +120,7 @@ function ProfileForm({ initial }: { initial: FormState }) {
           </select>
         </Field>
 
-        <section className="rounded-2xl border border-dashed p-4">
+        <section className="rounded-2xl border border-dashed p-4 sm:p-5">
           <label className="flex cursor-pointer items-start gap-3">
             <input
               type="checkbox"
@@ -128,7 +129,7 @@ function ProfileForm({ initial }: { initial: FormState }) {
               onChange={(e) => setForm((f) => ({ ...f, employed: e.target.checked }))}
             />
             <span>
-              <span className="block text-sm font-medium">
+              <span className="block text-sm font-semibold">
                 이미 회사에 다니고 있어요
                 <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[11px] font-normal text-muted-foreground">부가 기능</span>
               </span>
@@ -140,13 +141,13 @@ function ProfileForm({ initial }: { initial: FormState }) {
           </label>
 
           {form.employed ? (
-            <div className="mt-5 space-y-5 border-t pt-5">
+            <div className="mt-5 space-y-6 border-t pt-5">
               <Field
                 label="현재 회사"
                 error={errors.currentCompanyId}
                 hint={
                   form.currentCompanyId === OTHER_COMPANY_ID
-                    ? "목록에 없는 회사입니다. 비교 대상 12개사의 중앙값(업계 평균 프로필)으로 비교합니다."
+                    ? `목록에 없는 회사입니다. 비교 대상 ${companies.length}개사의 중앙값(업계 평균 프로필)으로 비교합니다.`
                     : undefined
                 }
               >
@@ -160,33 +161,51 @@ function ProfileForm({ initial }: { initial: FormState }) {
                 </select>
               </Field>
 
-              <Field label="현재 연봉 (만원)" error={errors.currentSalary} hint="세전 기준. 1,000 ~ 50,000">
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  className={inputCls}
-                  placeholder="예: 7000"
-                  value={form.currentSalary}
-                  onChange={set("currentSalary")}
-                  aria-invalid={!!errors.currentSalary}
-                />
+              <Field label="현재 연봉" error={errors.currentSalary} hint="세전 기준. 1,000 ~ 50,000만원">
+                <UnitInput unit="만원">
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    className={cn(inputCls, "pr-16")}
+                    placeholder="예: 7000"
+                    value={form.currentSalary}
+                    onChange={set("currentSalary")}
+                    aria-invalid={!!errors.currentSalary}
+                  />
+                </UnitInput>
               </Field>
 
               <Field label="현재 회사 근속기간" error={errors.tenureMonths}>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="flex items-center gap-2">
-                    <input type="number" inputMode="numeric" className={inputCls} placeholder="0" min={0} max={40} value={form.tenureYears} onChange={set("tenureYears")} />
-                    <span className="text-sm text-muted-foreground">년</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input type="number" inputMode="numeric" className={inputCls} placeholder="0" min={0} max={11} value={form.tenureMonths} onChange={set("tenureMonths")} />
-                    <span className="text-sm text-muted-foreground">개월</span>
-                  </div>
+                  <UnitInput unit="년">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      className={cn(inputCls, "pr-10")}
+                      placeholder="0"
+                      min={0}
+                      max={40}
+                      value={form.tenureYears}
+                      onChange={set("tenureYears")}
+                    />
+                  </UnitInput>
+                  <UnitInput unit="개월">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      className={cn(inputCls, "pr-14")}
+                      placeholder="0"
+                      min={0}
+                      max={11}
+                      value={form.tenureMonths}
+                      onChange={set("tenureMonths")}
+                    />
+                  </UnitInput>
                 </div>
               </Field>
 
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="근무 지역 (선택)">
+              <div className="grid gap-6 sm:grid-cols-2">
+                <Field label="근무 지역" optional>
                   <select className={inputCls} value={form.region} onChange={set("region")}>
                     <option value="">선택 안 함</option>
                     {REGIONS.map((r) => (
@@ -196,16 +215,25 @@ function ProfileForm({ initial }: { initial: FormState }) {
                     ))}
                   </select>
                 </Field>
-                <Field label="편도 통근 시간 (선택, 분)" error={errors.commuteMinutes}>
-                  <input type="number" inputMode="numeric" className={inputCls} placeholder="예: 45" value={form.commuteMinutes} onChange={set("commuteMinutes")} />
+                <Field label="편도 통근 시간" optional error={errors.commuteMinutes}>
+                  <UnitInput unit="분">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      className={cn(inputCls, "pr-10")}
+                      placeholder="예: 45"
+                      value={form.commuteMinutes}
+                      onChange={set("commuteMinutes")}
+                    />
+                  </UnitInput>
                 </Field>
               </div>
             </div>
           ) : null}
         </section>
 
-        <Button type="submit" size="lg" className="h-11 w-full text-base">
-          {form.employed ? "현재 회사 Fit 분석하기 →" : "나에게 맞는 회사 보기 →"}
+        <Button type="submit" size="xl" className="w-full">
+          {form.employed ? "현재 회사 Fit 분석하기" : "나에게 맞는 회사 보기"}
         </Button>
       </form>
     </div>
@@ -213,19 +241,44 @@ function ProfileForm({ initial }: { initial: FormState }) {
 }
 
 const MESSAGES: Record<string, string> = {
-  currentSalary: "연봉은 1,000만원 이상 50,000만원 이하의 숫자로 입력해 주세요.",
+  currentSalary: "연봉은 1,000만원 이상 50,000만원 이하로 입력해 주세요.",
   tenureMonths: "근속기간은 0 ~ 40년 범위로 입력해 주세요.",
   commuteMinutes: "통근 시간은 0 ~ 180분 범위로 입력해 주세요.",
   currentCompanyId: "현재 회사를 선택해 주세요.",
 };
 
-function Field({ label, hint, error, children }: { label: string; hint?: string; error?: string; children: React.ReactNode }) {
+/** 숫자 입력 오른쪽에 단위(만원/년/분)를 붙인다. 자식 input 에 pr-* 여백을 직접 준다. */
+function UnitInput({ unit, children }: { unit: string; children: React.ReactNode }) {
   return (
-    <label className="block space-y-1.5">
-      <span className="text-sm font-medium">{label}</span>
+    <div className="relative">
+      {children}
+      <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-sm text-muted-foreground">{unit}</span>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  hint,
+  error,
+  optional,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  error?: string;
+  optional?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block space-y-2">
+      <span className="flex items-center gap-1.5 text-sm font-semibold">
+        {label}
+        {optional ? <span className="text-xs font-normal text-muted-foreground">(선택)</span> : null}
+      </span>
       {children}
       {error ? <span className="block text-xs text-destructive">{error}</span> : null}
-      {!error && hint ? <span className={cn("block text-xs text-muted-foreground")}>{hint}</span> : null}
+      {!error && hint ? <span className="block text-xs text-muted-foreground">{hint}</span> : null}
     </label>
   );
 }

@@ -1,8 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { PRESETS, type PresetId } from "@/lib/presets";
 import { useCareer } from "@/store/CareerContext";
 
@@ -20,13 +18,16 @@ export function DemoPresets() {
         <button
           key={id}
           type="button"
-          className={cn(buttonVariants({ variant: "outline" }), "h-auto justify-start px-4 py-3 text-left")}
           onClick={() => go(id)}
+          className="group flex items-center gap-3 rounded-2xl border bg-card px-4 py-3.5 text-left transition-colors hover:border-primary/50 hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         >
-          <div>
-            <div className="font-semibold">데모: {PRESETS[id].title}</div>
-            <div className="text-xs font-normal text-muted-foreground">{PRESETS[id].subtitle}</div>
+          <div className="min-w-0 flex-1">
+            <div className="text-[15px] font-bold">{PRESETS[id].title}의 결과 보기</div>
+            <div className="mt-0.5 text-[13px] text-muted-foreground">{PRESETS[id].subtitle}</div>
           </div>
+          <span aria-hidden className="text-lg text-primary transition-transform group-hover:translate-x-0.5">
+            ›
+          </span>
         </button>
       ))}
     </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import { CareerProvider } from "@/store/CareerContext";
 import { CompaniesProvider } from "@/store/CompaniesContext";
@@ -7,9 +7,11 @@ import { StepHeader } from "@/components/layout/StepHeader";
 import { DisclaimerFooter } from "@/components/layout/DisclaimerFooter";
 import { loadCompanies } from "@/lib/companies.server";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const notoSansKr = Noto_Sans_KR({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -30,7 +32,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const companies = await loadCompanies();
 
   return (
-    <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="ko" className={`${notoSansKr.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <CompaniesProvider value={companies}>
           <CareerProvider>
