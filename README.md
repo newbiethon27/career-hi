@@ -24,7 +24,21 @@ npm run lint
 
 두 페르소나는 회사·직군·연봉·근속이 완전히 같고 성향만 다르다. `tests/persona.test.ts`가 이 대비를 회귀 테스트로 고정한다.
 
-## 데이터 출처 (파일이 곧 출처다)
+## 회사 데이터는 Supabase 에 있습니다
+
+회사 지표를 **코드가 아니라 DB 에** 두어, 배포 없이 고칠 수 있게 했습니다. 디자인 작업과 데이터 작업이 같은 PR 에서 충돌하지 않는 것이 목적입니다. 설정은 [`supabase/README.md`](./supabase/README.md).
+
+```
+Supabase companies 테이블
+   ↓ RootLayout(서버) 이 60초 ISR 로 읽음
+CompaniesProvider → useCompanies() → 계산 로직(순수 함수, 그대로)
+   ↓ 닿지 않으면
+data/*.json 폴백 + 푸터에 그 사실 표시
+```
+
+API 라우트는 여전히 0개입니다 — Server Component 가 직접 읽습니다. 계산은 전부 클라이언트에서 그대로 돌아갑니다.
+
+## 데이터 출처 (컬럼이 곧 출처다)
 
 | 파일 | 내용 | UI 배지 |
 |---|---|---|
